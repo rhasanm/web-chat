@@ -5,10 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delivery Tiger Chat</title>
-    <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
-
-    <!-- Optional theme -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <style>
         :root {
@@ -71,7 +68,7 @@
         .messenger__header > div {
             margin-top: 2px;
         }
-        .crossbar {
+        #crossbar {
             display: block;
             /* color:var(--bg-green-100); */
             /* text-align: end; */
@@ -174,20 +171,15 @@
             padding: 8px;
             padding-bottom: 15px;
             width: fit-content;
-            max-width: 80%;
+            max-width: 90%;
+            min-width: 50px;
             position: relative;
         }
         .client {
             margin-left: 20px;
         }
-        .client .conversation__text {
-            min-width: 50px;
-        }
         .rider {
             margin-right: 20px;
-        }
-        .rider .conversation__text {
-            min-width: 50px;
         }
         .timestamp {
             bottom: .8px;
@@ -325,146 +317,13 @@
                 <div class="row messenger__header">
                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"><h4>Order Tracking</h4></div>
                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                        <div class="crossbar"> 
+                        <div id="crossbar"> 
                         &times;
                         </div>
                     </div>
                 </div>
                 <div class="row messenger__body">
-                    <div class="conversation__date">
-                        <div class="divider">
-                            <span class="date" id="divider__top" style="opacity: 0;"> 23/05/2021 </span>
-                        </div>
-                        <div class="row conversation client">
-                            <!-- <div class="col-lg-3 conversation__user">
-                            </div> -->
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
-                                <span> Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja? </span> 
-                                <span class="timestamp">12.06 am</span>
-                            </div>
-                            <div class="bubble-arrow"></div>
-                        </div>
-                        <div class="row conversation rider">
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
-                                <span>না ভাই, আজকে হবে না। কালকে ইনশাল্লাহ দিতে পারবো </span> 
-                                <span class="timestamp">12.06 am</span>
-                            </div>
-                            <div class="bubble-arrow alt"></div>
-                            <!-- <div class="col-lg-3 conversation__user">
-                            </div> -->
-                        </div>
-                        <div class="row conversation client">
-                            <!-- <div class="col-lg-3 conversation__user">
-                            </div> -->
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
-                                <span>thik ache. ajke na dite parle r ki korar, ami dekhi, thik ache. ajke na dite parle r ki korar </span> 
-                                <span class="timestamp">12.06 am</span>
-                            </div>
-                            <div class="bubble-arrow"></div>
-                        </div>
-                    </div>
-                    <div class="conversation__date">
-                        <div class="divider">
-                            <span class="date"> 23/05/2022 </span>
-                        </div>
-                        <div class="row conversation client">
-                            <!-- <div class="col-lg-3 conversation__user">
-                            </div> -->
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
-                                <span> Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja? </span> 
-                                <span class="timestamp">12.06 am</span>
-                            </div>
-                            <div class="bubble-arrow"></div>
-                        </div>
-                        <div class="row conversation rider">
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
-                                <span>না ভাই, আজকে হবে না। কালকে ইনশাল্লাহ দিতে পারবো </span> 
-                                <span class="timestamp">12.06 am</span>
-                            </div>
-                            <div class="bubble-arrow alt"></div>
-                            <!-- <div class="col-lg-3 conversation__user">
-                            </div> -->
-                        </div>
-                        <div class="row conversation client">
-                            <!-- <div class="col-lg-3 conversation__user">
-                            </div> -->
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
-                                <span>thik ache. ajke na dite parle r ki korar, ami dekhi, thik ache. ajke na dite parle r ki korar </span> 
-                                <span class="timestamp">12.06 am</span>
-                            </div>
-                            <div class="bubble-arrow"></div>
-                        </div>
-                    </div>
-                    
-                    <div class="conversation__date">
-                        <div class="divider">
-                            <span class="date"> Today </span>
-                        </div>
-                        <div class="row conversation rider">
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
-                                <span>thank you</span>
-                                <span class="timestamp">12.06 am</span>
-                            </div>
-                            <div class="bubble-arrow alt"></div>
-                            <!-- <div class="col-lg-3 conversation__user">
-                            </div> -->
-                        </div>
-                        <div class="row conversation client">
-                            <!-- <div class="col-lg-3 conversation__user">
-                            </div> -->
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
-                                <span> Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja? </span> 
-                                <span class="timestamp">12.06 am</span>
-                            </div>
-                            <div class="bubble-arrow"></div>
-                        </div>
-                        <div class="row conversation rider">
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
-                                <span>না ভাই, আজকে হবে না। কালকে ইনশাল্লাহ দিতে পারবো </span> 
-                                <span class="timestamp">12.06 am</span>
-                            </div>
-                            <div class="bubble-arrow alt"></div>
-                            <!-- <div class="col-lg-3 conversation__user">
-                            </div> -->
-                        </div>
-                        <div class="row conversation client">
-                            <!-- <div class="col-lg-3 conversation__user">
-                            </div> -->
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
-                                <span>thik ache. ajke na dite parle r ki korar, ami dekhi, thik ache. ajke na dite parle r ki korar </span> 
-                                <span class="timestamp">12.06 am</span>
-                            </div>
-                            <div class="bubble-arrow"></div>
-                        </div>
-                        <div class="row conversation rider">
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
-                                <span>thank you</span>
-                                <span class="timestamp">12.06 am</span>
-                            </div>
-                            <div class="bubble-arrow alt"></div>
-                            <!-- <div class="col-lg-3 conversation__user">
-                            </div> -->
-                        </div>
-                        <div class="row conversation client">
-                            <!-- <div class="col-lg-3 conversation__user">
-                            </div> -->
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
-                                <span>thik ache. ajke na dite parle r ki korar, ami dekhi, thik ache. ajke na dite parle r ki korar </span> 
-                                <span class="timestamp">12.06 am</span>
-                            </div>
-                            <div class="bubble-arrow"></div>
-                        </div>
-                        <div class="row conversation rider">
-                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
-                                <span>thank you</span>
-                                <span class="timestamp">12.06 am</span>
-                            </div>
-                            <div class="bubble-arrow alt"></div>
-                            <!-- <div class="col-lg-3 conversation__user">
-                            </div> -->
-                        </div>
-                    </div>
-                    
+                    <!-- HERE -->
                 </div>
                 <div class="row messenger__footer">
                     <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 message">
@@ -482,23 +341,10 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script type="module">
         function debounce(func, timeout) {
-            // $(".date").css("opacity", 0);
             console.log("Called")
             let timer;
-            // $(".date").fadeIn(100);
             return function(...args) {
                 clearTimeout(timer);
-                // if (!fadeIn) {
-                //     console.log("applied fadein");
-                    // $(".date").fadeIn();
-                //     fadeIn = true;
-                // }
-                // let fadeTimer;
-                // clearTimeout(fadeTimer);
-                // fadeTimer = setTimeout(function() {
-                //     fadeIn = false;
-                // }, 10);
-                // console.log("applied opacity");
                 timer = setTimeout(function() {
                     func.apply(this, args);
                 }, timeout);
@@ -506,95 +352,24 @@
         }
         jQuery(function($) {
             $(".messenger__body").animate({ scrollTop: $('.messenger__body')[0].scrollHeight + 1000 }, 500);
-            // const timer = setTimeout(function() {
-                // $(".date").fadeIn(1000); 
-            // }
-            // , 1000);
-            // clearTimeout(timer);
-
-            // $(".messenger__body").scroll(debounce(function() {
-            //     // $(".date").fadeIn(1, function() {
-            //     $(".date").fadeOut(1000);
-            //     // });
-            // }, 3000));
-            
-            // $(".messenger__body").on("scroll", function() {
-            //     // console.log("Scrolled")
-            //     $(".date").css("opacity", 1);
-            //     // console.log($(".messenger__body").scrollTop)
-            //     // const clear = setInterval(function() {
-            //     //     $(".date").css("opacity", 0);
-            //     //     console.log("called")
-            //     //     clearInterval(clear);
-            //     // }, 3000);
-            //     $.debounce(3000, function() {
-            //         console.log("called");
-            //         $(".date").css("opacity", 0);
-            //     })
-            // });
-            // $(".messenger__body").off("scroll", function() {
-                // console.log("Scrolled")
-                // console.log($(".messenger__body").scrollTop)
-                // $(".date").css("opacity", 0);
-            // })
             let Timer;
             $(".messenger__body").scroll(function() {
-                // $(".date").fadeIn(1000);
-                let currentLabe = null;
+                let currentLabel = null;
                 const messenger__body = $(".messenger__body")
                 const topLabel = $("#divider__top")
-                // let i = 1;
                 $(".divider").each(function(_, el) {
-                    // console.log(i++);
                     if (messenger__body.scrollTop() >= $(el).offset().top) {
-                        // console.log(messenger__body.scrollTop(), $(el).offset().top, el.textContent)
-                        // $(el).css("opacity", 1);
-                        // $(el).fadeIn(100);
-                        currentLabe = el;
-                        // debounce(() => {
-                        //     console.log("callde")
-                            // $(el).css("opacity", 1);
-
-                            // setTimeout(() => {
-                                // $(el).css("opacity", 0);
-                                // $(el).fadeOut(1000);
-                            // }, 1000)
-                        // }, 2000);
-                        // var stopListener = $(window).mouseup(function(){ // listen to mouse up
-                        //     // $('#scrollMsg').html('STOPPED SCROLLING!');
-                        //     $(el).fadeOut();
-                        //     stopListner(); // Stop listening to mouse up after heard for the first time 
-                        // });
+                        currentLabel = el;
                     }
-                    // if ()
                 });
-                // console.log(currentLabe, " found")
-                // currentLabe = true
-                if (currentLabe) {
-                    // console.log("fadeIn", $.trim(currentLabe.textContent))
+                if (currentLabel) {
                     $(topLabel).css({"opacity": 1});
-                    topLabel.textContent = $.trim(currentLabe.textContent)
+                    topLabel.textContent = $.trim(currentLabel.textContent)
                 } else {
-                    // console.log("fadeOUT", currentLabe)
-                    // $(el).fadeOut(1000);
-                    // $(".date").css("opacity", 0);
                     $(topLabel).css("opacity", 0);
-                    // $(el).css("opacity", 0);
                 }
-                // clearTimeout(Timer);
-                // Timer = setTimeout(function() {
-                //     console.log('scrolling is stop');
-                //     $(".date").fadeOut(100)
-                //     // $(currentLabe).css("opacity", 0);
-                // },1000);
             });
-            // $(".messenger__body").on("scrollstop",function(){
-            //     alert("Stopped scrolling!");
-            // });
-
-            $(".crossbar").click(function() {
-                // $(".messenger").css("display", "none")
-                // $(".messenger").fadeOut(1000)
+            $("#crossbar").click(function() {
                 $(".messenger").animate({
                     opacity: 0.25,
                     bottom: "-=500",
@@ -612,67 +387,220 @@
                 });
             });
         });
-        // function deb
     </script>
     <script type="module">
-        import {sayHello, read} from './firebase.js';
+        import {subscribe, storeMessage} from './firebase.js';
 
-        jQuery(function($) {
-            // $(".messenger__body")[0].scrollTo(0, $('messenger_body')[0].scrollIntoView)
-            $(".message__send").click(async function() {
-                // sayHello();
+        jQuery(async function($) {
+            let unsubscribe = await subscribe();
+            const messenger__body = $('.messenger__body');
+            const chatBox = $('#message');
+            const crossBar = $('#crossbar');
+            const messageSendButton = $(".message__send");
+            // subscribe button
+
+            messageSendButton.click(async function() {
                 try {
-                    const x = await read();
+                    const text = chatBox.val();
+                    chatBox.val('');
+                    await storeMessage(text);
+                    messenger__body.animate({ scrollTop: messenger__body[0].scrollHeight + 1000 }, 50);
                 } catch(err) {
                     console.log(err)
                     alert(err);
                 }
-                
-                // console.log(x.)
-                const message = x.toString();
-                console.log(message);
-                $(".messenger__body").append(bindNewMessage("client", message));
-                // $('.conversation__text')[0].scrollIntoView;
-                // console.log($("#message").val())
-                $(".messenger__body").append(bindNewMessage("rider", $("#message").val()));
-                $('#message').val('');
-                // $('.messenger__body').scrollTop();
-                // console.log(($('.messenger__footer').offset().top) + 1000)
-                $(".messenger__body").animate({ scrollTop: $('.messenger__body')[0].scrollHeight + 1000 }, 50);
-
             });
+            crossBar.click(function() {
+                unsubscribe();
+            });
+            // subscribe function
         });
     </script>
     <script>
-        function bindNewMessage(sender, message) {
+        const messageDates = new Map();
+        let newDate = null, dateChanged = null, firsDateSlot = true;
+        const messenger__body = $('.messenger__body');
+
+        class User {}
+
+        class Order{}
+
+        function displayMessage(content) {
+            try {
+                const timestamp = new Date(content.timestamp) == "Invalid Date" 
+                                ? new Date(content.timestamp.seconds*1000) : new Date(content.timestamp);
+                const [day, month, year, hour, minute] = 
+                    [timestamp.getDay(), timestamp.getMonth(), timestamp.getFullYear(), timestamp.getHours(), timestamp.getMinutes()];
+                const today = new Date();
+                const date = today.getDay() == day && today.getMonth() == month && today.getFullYear() == year 
+                            ? "Today" : (day + '/' + month + '/' + year);
+                dateChanged = messageDates.get(date);
+                const sender = content.sender == "01844555666" ? "client" : "rider";
+                const sentAt = hour > 12 
+                    ? `${(hour - 12).toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} pm` 
+                    : `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} am`;
+                if (!dateChanged) {
+                    newDate = newTimestamp(date);
+                    messenger__body.append(bindNewMessage(sender, content.message, newDate, sentAt));
+                    messageDates.set(date, true);                    
+                } else {
+                    newDate.append(bindNewMessage(sender, content.message, null, sentAt))
+                    messenger__body.append(newDate)
+                }
+                messenger__body.animate({ scrollTop: messenger__body[0].scrollHeight + 1000 }, 50);
+            } catch(err) {
+                console.log(err)
+            }
+        }
+        function newTimestamp(timestamp) {
+            const date = $(`<div class="conversation__date"></div>`);
+            const divider = !firsDateSlot 
+                ? $(`<div class="divider"><span class="date"> ${timestamp} </span></div>`)
+                : $(`<div class="divider"><span class="date" id="divider__top" style="opacity: 0;"> ${timestamp} </span></div>`)
+            firsDateSlot = false;
+            date.append(divider);
+            return date;
+        }
+        function bindNewMessage(sender, message, timestamp = null, sentAt = null) {
             const client = `<div class="row conversation client">
                 <!-- <div class="col-lg-3 conversation__user">
                 </div> -->
                 <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
                     <span> ${message} </span> 
-                    <span class="timestamp">12.06 am</span>
+                    <span class="timestamp">${sentAt}</span>
                 </div>
                 <div class="bubble-arrow"></div>
             </div>`;
             const rider = `<div class="row conversation rider">
                 <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
                     <span>${message}</span> 
-                    <span class="timestamp">12.06 am</span>
+                    <span class="timestamp">${sentAt}</span>
                 </div>
                 <div class="bubble-arrow alt"></div>
                 <!-- <div class="col-lg-3 conversation__user">
                 </div> -->
             </div>`;
-            switch(sender) {
-                case "rider":
-                    return rider;
-                    break;
-                case "client":
-                    return client;
-                    break;
+            if (timestamp) {
+                timestamp.append(sender == 'rider' ? rider : client)
+                return timestamp;
+            } else {
+                return $(sender == 'rider' ? rider : client);
             }
         }
     </script>
     <script type="module" src="./firebase.js"></script>
 </body>
 </html>
+
+
+<!--  
+<div class="conversation__date">
+    <div class="divider">
+        <span class="date" id="divider__top" style="opacity: 0;"> 23/05/2021 </span>
+    </div>
+    <div class="row conversation client">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+            <span> Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja? </span> 
+            <span class="timestamp">12.06 am</span>
+        </div>
+        <div class="bubble-arrow"></div>
+    </div>
+    <div class="row conversation rider">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
+            <span>না ভাই, আজকে হবে না। কালকে ইনশাল্লাহ দিতে পারবো </span> 
+            <span class="timestamp">12.06 am</span>
+        </div>
+        <div class="bubble-arrow alt"></div>
+    </div>
+    <div class="row conversation client">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+            <span>thik ache. ajke na dite parle r ki korar, ami dekhi, thik ache. ajke na dite parle r ki korar </span> 
+            <span class="timestamp">12.06 am</span>
+        </div>
+        <div class="bubble-arrow"></div>
+    </div>
+</div>
+
+<div class="conversation__date">
+    <div class="divider">
+        <span class="date"> 23/05/2022 </span>
+    </div>
+    <div class="row conversation client">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+            <span> Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja? </span> 
+            <span class="timestamp">12.06 am</span>
+        </div>
+        <div class="bubble-arrow"></div>
+    </div>
+    <div class="row conversation rider">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
+            <span>না ভাই, আজকে হবে না। কালকে ইনশাল্লাহ দিতে পারবো </span> 
+            <span class="timestamp">12.06 am</span>
+        </div>
+        <div class="bubble-arrow alt"></div>
+    </div>
+    <div class="row conversation client">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+            <span>thik ache. ajke na dite parle r ki korar, ami dekhi, thik ache. ajke na dite parle r ki korar </span> 
+            <span class="timestamp">12.06 am</span>
+        </div>
+        <div class="bubble-arrow"></div>
+    </div>
+</div>
+
+<div class="conversation__date">
+    <div class="divider">
+        <span class="date"> Today </span>
+    </div>
+    <div class="row conversation rider">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
+            <span>thank you</span>
+            <span class="timestamp">12.06 am</span>
+        </div>
+        <div class="bubble-arrow alt"></div>
+    </div>
+    <div class="row conversation client">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+            <span> Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja? </span> 
+            <span class="timestamp">12.06 am</span>
+        </div>
+        <div class="bubble-arrow"></div>
+    </div>
+    <div class="row conversation rider">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
+            <span>না ভাই, আজকে হবে না। কালকে ইনশাল্লাহ দিতে পারবো </span> 
+            <span class="timestamp">12.06 am</span>
+        </div>
+        <div class="bubble-arrow alt"></div>
+    </div>
+    <div class="row conversation client">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+            <span>thik ache. ajke na dite parle r ki korar, ami dekhi, thik ache. ajke na dite parle r ki korar </span> 
+            <span class="timestamp">12.06 am</span>
+        </div>
+        <div class="bubble-arrow"></div>
+    </div>
+    <div class="row conversation rider">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
+            <span>thank you</span>
+            <span class="timestamp">12.06 am</span>
+        </div>
+        <div class="bubble-arrow alt"></div>
+    </div>
+    <div class="row conversation client">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+            <span>thik ache. ajke na dite parle r ki korar, ami dekhi, thik ache. ajke na dite parle r ki korar </span> 
+            <span class="timestamp">12.06 am</span>
+        </div>
+        <div class="bubble-arrow"></div>
+    </div>
+    <div class="row conversation rider">
+        <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
+            <span>thank you</span>
+            <span class="timestamp">12.06 am</span>
+        </div>
+        <div class="bubble-arrow alt"></div>
+    </div>
+</div>
+
+ -->

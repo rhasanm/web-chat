@@ -1,32 +1,26 @@
 class Message {
-    constructor (name, state, country ) {
-        this.name = name;
-        this.state = state;
-        this.country = country;
+    constructor(sender, message, timestamp) {
+        this.sender = sender;
+        this.message = message;
+        this.timestamp = timestamp;
     }
     toString() {
-        return this.name + ', ' + this.state + ', ' + this.country;
+        return this.sender + 'sent ' + this.message + ' at ' + this.timestamp;
     }
 }
 const messageConverter = {
-    toFirestore: (city) => {
+    toFirestore: (content) => {
         return {
-            name: city.name,
-            state: city.state,
-            country: city.country
+            sender: content.sender,
+            message: content.message,
+            timestamp: content.timestamp
         };
     },
     fromFirestore: (snapshot, options) => {
         const data = snapshot.data(options);
-        return new Message(data.name, data.state, data.country);
+        return new Message(data.sender, data.message, data.timestamp);
     }
-};
-
-export function sayHello() {
-    alert("HELLO")
 }
-
-// Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
 import { 
     getFirestore,
@@ -37,13 +31,13 @@ import {
     getDocs,
     onSnapshot,
     query,
+    addDoc,
     where,
-    Timestamp
+    limit,
+    Timestamp,
+    orderBy,
+    collectionGroup
 } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
 const firebaseConfig = {
   apiKey: "AIzaSyCXpbTwk85O8WdHnMDy6BlQYY_8hZhi8xI",
   authDomain: "dt-chat-382db.firebaseapp.com",
@@ -53,91 +47,36 @@ const firebaseConfig = {
   appId: "1:335861675650:web:0e7699c3d9be6015e4a69b"
 };
 
-// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-async function readAll() {
-    const docRef = doc(db, "cities", "SF");
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-        console.log("Document data:", docSnap.data());
-    } else {
-    // doc.data() will be undefined in this case
-        console.log("No such document!");
-    }
-}
-async function subscribe() {
-    const unsub = onSnapshot(doc(db, "cities", "SF"), (doc) => {
-        console.log("Current data: ", doc.data());
-    });
-}
-async function queryData() {
-    const q = query(collection(db, "cities"), where("capital", "==", true));
-
-    const querySnapshot = await getDocs(q);
-    querySnapshot.forEach((doc) => {
-    // doc.data() is never undefined for query doc snapshots
-    console.log(doc.id, " => ", doc.data());
-    });
-}
-async function writeMessage() {
-    await setDoc(doc(db, "cities", "LA"), {
-        name: "Los Angeles",
-        state: "CA",
-        country: "USA"
-      });
-      const docData = {
-        stringExample: "Hello world!",
-        booleanExample: true,
-        numberExample: 3.14159265,
-        dateExample: Timestamp.fromDate(new Date("December 10, 1815")),
-        arrayExample: [5, true, "hello"],
-        nullExample: null,
-        objectExample: {
-            a: 5,
-            b: {
-                nested: "foo"
-            }
-        }
-    };
-    await setDoc(doc(db, "data", "one"), docData);
-}
-export async function read() {
-    const ref = doc(db, "cities", "LA").withConverter(messageConverter);
-    const docSnap = await getDoc(ref);
-    if (docSnap.exists()) {
-        // Convert to City object
-        const city = docSnap.data();
-        // Use a City instance method
-        console.log(city.toString());
-        return city;
-    } else {
-        console.log("No such document!");
-    }
-}
-async function write() {
+export async function storeMessage(message) {
     try {
-        const ref = doc(db, "cities", "LA").withConverter(messageConverter);
-
-        await setDoc(ref, new Message("Dhaka","Bangladesh","Asia"));
-        await read();
+        const ref = doc(collection(db, "dt-1234")).withConverter(messageConverter);
+        await setDoc(ref, new Message("01844555666", message, Timestamp.now()));
     } catch(err) {
         console.log(err);
-        // throw err;
     }
 }
-// const q = query(citiesRef, orderBy("name", "desc"), limit(3));
 
-// writeMessage();
-// read();
-try {
-    write();
-} catch(err) {
-    // alert(err);
-    // throw err;
+export async function subscribe() {
+    try {
+        const recentMessagesQuery = query(collection(db, 'dt-1234'), orderBy("timestamp", "asc"));
+        // const recentMessagesQuery = query(collection(db, 'dt-1234'), where('sender', 'in', ['01819666999', '01844555666']));
+        const unsubscribe = onSnapshot(recentMessagesQuery.withConverter(messageConverter), function(snapshot) {
+            snapshot.docChanges().forEach(function(change) {
+                // if (change.type === 'removed') {
+                    // deleteMessage(change.doc.id);
+                // } else {
+                var message = change.doc.data();
+                console.log(message);
+                displayMessage(message);
+                // }
+            });
+        });
+        // console.log(typeof(unsubscribe))
+        return unsubscribe;
+    } catch(err) {
+        console.log(err);
+    }
 }
-// readAll();
-// subscribe();
-// queryData();
