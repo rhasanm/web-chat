@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delivery Tiger Chat</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <style>
+        :root {
+            --bg-chat-900: #111;
+            --bg-chat-800: #222;
+            --bg-chat-700: #333;
+            --bg-chat-600: #444;
+            --bg-chat-500: #777;
+            --bg-chat-400: #bbb;
+            --bg-chat-300: #ccc;
+            --bg-chat-200: #ddd;
+            --bg-chat-100: #eee;
+            --bg-chat-50: #fff;
+
+            --bg-green-50	: rgb(240 253 244);
+            --bg-green-100	: rgb(220 252 231);
+            --bg-green-200	: rgb(187 247 208);
+            --bg-green-300	: rgb(134 239 172);
+            --bg-green-400	: rgb(74 222 128);
+            --bg-green-500	: rgb(34 197 94);
+            --bg-green-600	: rgb(22 163 74);
+            --bg-green-700	: rgb(21 128 61);
+            --bg-green-800	: rgb(22 101 52);
+            --bg-green-900	: rgb(20 83 45);
+        }
+        @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap');
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+        .container {
+            display: flex;
+            justify-content: center;
+        }
+        .messenger {
+            margin-top: 10px;
+            background-color: #eee;
+            width: calc(230px + 100px + 50px);
+            height: calc(370px + 100px + 100px);
+            border-radius: 1rem;
+            font-family: 'Poppins', sans-serif;
+            /* margin-right: 40%; */
+            /* padding: 0px 20px; */
+        }
+        .messenger__header {
+            /* color: #777; */
+            /* color: var(--bg-chat-500); */
+            /* font-weight: bold; */
+            color: var(--bg-chat-200);
+            padding: 1.8% 0 0 5%;
+            height: 10%;
+            /* background-color: #333; */
+            background-color: var(--bg-chat-700);
+            /* background-color: var(--bg-green-800); */
+            border-radius: 1rem 1rem 0rem 0rem;
+            /* margin-top: 15px; */
+            /* width: 100%; */
+        }
+        .messenger__header > div {
+            margin-top: 2px;
+        }
+        .crossbar {
+            display: block;
+            /* color:var(--bg-green-100); */
+            /* text-align: end; */
+            text-align: right;
+            /* text-align: calc(200%); */
+            /* vertical-align:text-bottom; */
+            /* text-align-last: auto; */
+            /* vertical-align: middle; */
+            font-size: 2.7rem;
+            /* margin-right: 20px; */
+            margin-left: 75%;
+            cursor: pointer;
+            width: 10%;
+            /* padding-left: 40px; */
+            
+        }
+        .messenger__body {
+            position: relative;
+            height: 75%;
+            /* max-height: 100px; */
+            overflow-y: scroll;
+            overflow-x: hidden;
+            scrollbar-width: none;  /* Firefox */
+        }
+        .messenger__footer {
+            height: 15%;
+            /* background-color: #ccc; */
+            background-color: var(--bg-chat-300);
+            /* background-color: var(--bg-green-700); */
+            border-radius: 0rem 0rem 1rem 1rem;
+        }
+        textarea {
+            font-size: 1.2rem;
+            height: calc(15px + 50px);
+            /* padding: 0px; */
+            width: 100%;
+            padding: 5px 5px;
+            margin: 10px 1px 0px 10px;
+            border: none;
+            resize: none;
+            border-radius: 4px;
+            /* background-color: #ddd; */
+            background-color: var(--bg-chat-200);
+        }
+        textarea:focus {
+            /* border: none; */
+            outline: none;
+        }
+        .message {
+            padding: 0%;
+        }
+        .message__send {
+            margin: 20px 0px 0px 4px;
+            color: #ddd;
+            /* color: var(--bg-chat-200); */
+            /* color: var(--bg-green-700); */
+            /* background-color: #444; */
+            background-color: var(--bg-chat-600);
+            /* background-color: var(--bg-green-800); */
+            border: none;
+            text-decoration: none;
+            text-align: center;
+            border-radius: 3px;
+            padding: 13px 15px;
+        }
+        .message__send:hover {
+            /* background-color: #222; */
+            /* background-color: var(--button__hover); */
+            background-color: var(--bg-chat-800);
+            /* border: 1px solid #444; */
+            /* color: #eee; */
+            /* color: var(--bg-chat-50); */
+            color: #fff;
+        }
+        .message__send:active {
+            /* background-color: red; */
+            box-shadow: rgba(5, 5, 5, 0.15) 2px 2px 2.6px, rgba(5, 5, 5, 0.15) -2px 0px 2.6px;
+        }
+        .conversation {
+            /* background-color: #ddd; */
+            /* width: 100%; */
+            margin: 10px 10px;
+            /* margin-left: 20px; */
+            position: relative;
+            /* padding: 2px 10px; */
+        }
+        .conversation__user {
+            display: none;
+            /* width: 100%; */
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #222;
+        }
+        .conversation__text {
+            /* background-color: #ddd; */
+            background-color:var(--bg-chat-200);
+            /* background-color: var(--bg-green-600); */
+            border-radius: 5px;
+            padding: 8px;
+            padding-bottom: 15px;
+            width: fit-content;
+            max-width: 80%;
+            position: relative;
+        }
+        .client {
+            margin-left: 20px;
+        }
+        .client .conversation__text {
+            min-width: 50px;
+        }
+        .rider {
+            margin-right: 20px;
+        }
+        .rider .conversation__text {
+            min-width: 50px;
+        }
+        .timestamp {
+            bottom: .8px;
+            right: 5px;
+            font-size: 1rem;
+            position: absolute;
+            color: #777;
+        }
+        .bubble-arrow {
+            position: absolute;
+            width: 0;
+            bottom: 40px;
+            left: -16px;
+            height: 0;
+        }
+        .bubble-arrow.alt {
+            right: -2px;      
+            bottom: 40px;
+            left: auto;
+        }
+        .bubble-arrow:after {
+            content: "";
+            position: absolute;
+            border: 0 solid transparent;
+            border-top: 9px solid #ddd;
+            border-radius: 0 20px 0;
+            width: 15px;
+            height: 30px;
+            transform: rotate(145deg);
+        }
+        .bubble-arrow.alt:after {
+            transform: rotate(45deg) scaleY(-1);
+        }
+        .date {
+            /* margin-top: 15px; */
+            /* top: 10px; */
+            /* position: absolute; */
+            /* position: sticky; */
+            /* text-align: center; */
+            /* z-index: 2; */
+            /* background-color: #bbb; */
+            background-color: var(--bg-chat-400);
+            padding: 5px 8px;
+            border-radius: 5px;
+            /* top: -15px; */
+            /* right: 40%; */
+            /* opacity: 65%; */
+            /* opacity: 0; */
+            /* animation: fadeOut 4s forwards; */
+        }
+        .divider span {
+            display: inline-block;
+        }
+        .divider {
+            text-align: center;
+            /* left: 3%; */
+            /* right: 3%; */
+            z-index: 30;
+            position: sticky;
+            /* position: absolute; */
+            top: 10px;
+            /* padding: 0; */
+            /* margin: 0; */
+            /* display: none; */
+        }
+        /* .conversation__date { */
+            /* position: relative; */
+            /* position: sticky; */
+        /* } */
+        @keyframes fadeOut {
+            0%   {opacity: 1;}
+            90%  {opacity: 1;}
+            100% {opacity: 0;}
+        }
+        ::-webkit-scrollbar {
+            /* width: 15px; */
+            /* height: 15px; */
+            display: none;
+        }
+        /* Extra small devices (phones, 600px and down) */
+        @media only screen and (max-width: 600px) {
+            textarea {
+                font-size: 1.5rem;
+            }
+            .conversation {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Small devices (portrait tablets and large phones, 600px and up) */
+        @media only screen and (min-width: 600px) {
+            textarea {
+                font-size: 1.5rem;
+            }
+            .conversation {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Medium devices (landscape tablets, 768px and up) */
+        @media only screen and (min-width: 768px) {
+            textarea {
+                font-size: 1.5rem;
+            }
+            .conversation {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Large devices (laptops/desktops, 992px and up) */
+        @media only screen and (min-width: 992px) {
+            textarea {
+                font-size: 1.5rem;
+            }
+            .conversation {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Extra large devices (large laptops and desktops, 1200px and up) */
+        @media only screen and (min-width: 1200px) {
+            textarea {
+                font-size: 1.5rem;
+            }
+            .conversation {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="messenger col-lg-4 col-md-4 col-sm-4 col-xs-4 col-lg-offset-4">
+                <div class="row messenger__header">
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"><h4>Order Tracking</h4></div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+                        <div class="crossbar"> 
+                        &times;
+                        </div>
+                    </div>
+                </div>
+                <div class="row messenger__body">
+                    <div class="conversation__date">
+                        <div class="divider">
+                            <span class="date" id="divider__top" style="opacity: 0;"> 23/05/2021 </span>
+                        </div>
+                        <div class="row conversation client">
+                            <!-- <div class="col-lg-3 conversation__user">
+                            </div> -->
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+                                <span> Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja? </span> 
+                                <span class="timestamp">12.06 am</span>
+                            </div>
+                            <div class="bubble-arrow"></div>
+                        </div>
+                        <div class="row conversation rider">
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
+                                <span>না ভাই, আজকে হবে না। কালকে ইনশাল্লাহ দিতে পারবো </span> 
+                                <span class="timestamp">12.06 am</span>
+                            </div>
+                            <div class="bubble-arrow alt"></div>
+                            <!-- <div class="col-lg-3 conversation__user">
+                            </div> -->
+                        </div>
+                        <div class="row conversation client">
+                            <!-- <div class="col-lg-3 conversation__user">
+                            </div> -->
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+                                <span>thik ache. ajke na dite parle r ki korar, ami dekhi, thik ache. ajke na dite parle r ki korar </span> 
+                                <span class="timestamp">12.06 am</span>
+                            </div>
+                            <div class="bubble-arrow"></div>
+                        </div>
+                    </div>
+                    <div class="conversation__date">
+                        <div class="divider">
+                            <span class="date"> 23/05/2022 </span>
+                        </div>
+                        <div class="row conversation client">
+                            <!-- <div class="col-lg-3 conversation__user">
+                            </div> -->
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+                                <span> Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja? </span> 
+                                <span class="timestamp">12.06 am</span>
+                            </div>
+                            <div class="bubble-arrow"></div>
+                        </div>
+                        <div class="row conversation rider">
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
+                                <span>না ভাই, আজকে হবে না। কালকে ইনশাল্লাহ দিতে পারবো </span> 
+                                <span class="timestamp">12.06 am</span>
+                            </div>
+                            <div class="bubble-arrow alt"></div>
+                            <!-- <div class="col-lg-3 conversation__user">
+                            </div> -->
+                        </div>
+                        <div class="row conversation client">
+                            <!-- <div class="col-lg-3 conversation__user">
+                            </div> -->
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+                                <span>thik ache. ajke na dite parle r ki korar, ami dekhi, thik ache. ajke na dite parle r ki korar </span> 
+                                <span class="timestamp">12.06 am</span>
+                            </div>
+                            <div class="bubble-arrow"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="conversation__date">
+                        <div class="divider">
+                            <span class="date"> Today </span>
+                        </div>
+                        <div class="row conversation rider">
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
+                                <span>thank you</span>
+                                <span class="timestamp">12.06 am</span>
+                            </div>
+                            <div class="bubble-arrow alt"></div>
+                            <!-- <div class="col-lg-3 conversation__user">
+                            </div> -->
+                        </div>
+                        <div class="row conversation client">
+                            <!-- <div class="col-lg-3 conversation__user">
+                            </div> -->
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+                                <span> Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja?Hello, apni kothay achen? ajke dea ja? </span> 
+                                <span class="timestamp">12.06 am</span>
+                            </div>
+                            <div class="bubble-arrow"></div>
+                        </div>
+                        <div class="row conversation rider">
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
+                                <span>না ভাই, আজকে হবে না। কালকে ইনশাল্লাহ দিতে পারবো </span> 
+                                <span class="timestamp">12.06 am</span>
+                            </div>
+                            <div class="bubble-arrow alt"></div>
+                            <!-- <div class="col-lg-3 conversation__user">
+                            </div> -->
+                        </div>
+                        <div class="row conversation client">
+                            <!-- <div class="col-lg-3 conversation__user">
+                            </div> -->
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+                                <span>thik ache. ajke na dite parle r ki korar, ami dekhi, thik ache. ajke na dite parle r ki korar </span> 
+                                <span class="timestamp">12.06 am</span>
+                            </div>
+                            <div class="bubble-arrow"></div>
+                        </div>
+                        <div class="row conversation rider">
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
+                                <span>thank you</span>
+                                <span class="timestamp">12.06 am</span>
+                            </div>
+                            <div class="bubble-arrow alt"></div>
+                            <!-- <div class="col-lg-3 conversation__user">
+                            </div> -->
+                        </div>
+                        <div class="row conversation client">
+                            <!-- <div class="col-lg-3 conversation__user">
+                            </div> -->
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+                                <span>thik ache. ajke na dite parle r ki korar, ami dekhi, thik ache. ajke na dite parle r ki korar </span> 
+                                <span class="timestamp">12.06 am</span>
+                            </div>
+                            <div class="bubble-arrow"></div>
+                        </div>
+                        <div class="row conversation rider">
+                            <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
+                                <span>thank you</span>
+                                <span class="timestamp">12.06 am</span>
+                            </div>
+                            <div class="bubble-arrow alt"></div>
+                            <!-- <div class="col-lg-3 conversation__user">
+                            </div> -->
+                        </div>
+                    </div>
+                    
+                </div>
+                <div class="row messenger__footer">
+                    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 message">
+                        <textarea name="message" id="message" cols="30" rows="2" placeholder="Type a message"></textarea>
+                    </div>
+                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
+                        <button class="message__send"> Send </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+    <script type="module">
+        function debounce(func, timeout) {
+            // $(".date").css("opacity", 0);
+            console.log("Called")
+            let timer;
+            // $(".date").fadeIn(100);
+            return function(...args) {
+                clearTimeout(timer);
+                // if (!fadeIn) {
+                //     console.log("applied fadein");
+                    // $(".date").fadeIn();
+                //     fadeIn = true;
+                // }
+                // let fadeTimer;
+                // clearTimeout(fadeTimer);
+                // fadeTimer = setTimeout(function() {
+                //     fadeIn = false;
+                // }, 10);
+                // console.log("applied opacity");
+                timer = setTimeout(function() {
+                    func.apply(this, args);
+                }, timeout);
+            }
+        }
+        jQuery(function($) {
+            $(".messenger__body").animate({ scrollTop: $('.messenger__body')[0].scrollHeight + 1000 }, 500);
+            // const timer = setTimeout(function() {
+                // $(".date").fadeIn(1000); 
+            // }
+            // , 1000);
+            // clearTimeout(timer);
+
+            // $(".messenger__body").scroll(debounce(function() {
+            //     // $(".date").fadeIn(1, function() {
+            //     $(".date").fadeOut(1000);
+            //     // });
+            // }, 3000));
+            
+            // $(".messenger__body").on("scroll", function() {
+            //     // console.log("Scrolled")
+            //     $(".date").css("opacity", 1);
+            //     // console.log($(".messenger__body").scrollTop)
+            //     // const clear = setInterval(function() {
+            //     //     $(".date").css("opacity", 0);
+            //     //     console.log("called")
+            //     //     clearInterval(clear);
+            //     // }, 3000);
+            //     $.debounce(3000, function() {
+            //         console.log("called");
+            //         $(".date").css("opacity", 0);
+            //     })
+            // });
+            // $(".messenger__body").off("scroll", function() {
+                // console.log("Scrolled")
+                // console.log($(".messenger__body").scrollTop)
+                // $(".date").css("opacity", 0);
+            // })
+            let Timer;
+            $(".messenger__body").scroll(function() {
+                // $(".date").fadeIn(1000);
+                let currentLabe = null;
+                const messenger__body = $(".messenger__body")
+                const topLabel = $("#divider__top")
+                // let i = 1;
+                $(".divider").each(function(_, el) {
+                    // console.log(i++);
+                    if (messenger__body.scrollTop() >= $(el).offset().top) {
+                        // console.log(messenger__body.scrollTop(), $(el).offset().top, el.textContent)
+                        // $(el).css("opacity", 1);
+                        // $(el).fadeIn(100);
+                        currentLabe = el;
+                        // debounce(() => {
+                        //     console.log("callde")
+                            // $(el).css("opacity", 1);
+
+                            // setTimeout(() => {
+                                // $(el).css("opacity", 0);
+                                // $(el).fadeOut(1000);
+                            // }, 1000)
+                        // }, 2000);
+                        // var stopListener = $(window).mouseup(function(){ // listen to mouse up
+                        //     // $('#scrollMsg').html('STOPPED SCROLLING!');
+                        //     $(el).fadeOut();
+                        //     stopListner(); // Stop listening to mouse up after heard for the first time 
+                        // });
+                    }
+                    // if ()
+                });
+                // console.log(currentLabe, " found")
+                // currentLabe = true
+                if (currentLabe) {
+                    // console.log("fadeIn", $.trim(currentLabe.textContent))
+                    $(topLabel).css({"opacity": 1});
+                    topLabel.textContent = $.trim(currentLabe.textContent)
+                } else {
+                    // console.log("fadeOUT", currentLabe)
+                    // $(el).fadeOut(1000);
+                    // $(".date").css("opacity", 0);
+                    $(topLabel).css("opacity", 0);
+                    // $(el).css("opacity", 0);
+                }
+                // clearTimeout(Timer);
+                // Timer = setTimeout(function() {
+                //     console.log('scrolling is stop');
+                //     $(".date").fadeOut(100)
+                //     // $(currentLabe).css("opacity", 0);
+                // },1000);
+            });
+            // $(".messenger__body").on("scrollstop",function(){
+            //     alert("Stopped scrolling!");
+            // });
+
+            $(".crossbar").click(function() {
+                // $(".messenger").css("display", "none")
+                // $(".messenger").fadeOut(1000)
+                $(".messenger").animate({
+                    opacity: 0.25,
+                    bottom: "-=500",
+                    left: "-=10",
+                    height: "toggle",
+                    width: "toggle"
+                }, 1000, function() {
+                    $(".messenger").animate({
+                        opacity: "1",
+                        bottom: "+=500",
+                        left: "+=10",
+                        height: "toggle",
+                    width: "toggle"
+                    })
+                });
+            });
+        });
+        // function deb
+    </script>
+    <script type="module">
+        import {sayHello, read} from './firebase.js';
+
+        jQuery(function($) {
+            // $(".messenger__body")[0].scrollTo(0, $('messenger_body')[0].scrollIntoView)
+            $(".message__send").click(async function() {
+                // sayHello();
+                const x = await read();
+                // console.log(x.)
+                const message = x.toString();
+                console.log(message);
+                $(".messenger__body").append(bindNewMessage("client", message));
+                // $('.conversation__text')[0].scrollIntoView;
+                // console.log($("#message").val())
+                $(".messenger__body").append(bindNewMessage("rider", $("#message").val()));
+                $('#message').val('');
+                // $('.messenger__body').scrollTop();
+                // console.log(($('.messenger__footer').offset().top) + 1000)
+                $(".messenger__body").animate({ scrollTop: $('.messenger__body')[0].scrollHeight + 1000 }, 50);
+
+            });
+        });
+    </script>
+    <script>
+        function bindNewMessage(sender, message) {
+            const client = `<div class="row conversation client">
+                <!-- <div class="col-lg-3 conversation__user">
+                </div> -->
+                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+                    <span> ${message} </span> 
+                    <span class="timestamp">12.06 am</span>
+                </div>
+                <div class="bubble-arrow"></div>
+            </div>`;
+            const rider = `<div class="row conversation rider">
+                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
+                    <span>${message}</span> 
+                    <span class="timestamp">12.06 am</span>
+                </div>
+                <div class="bubble-arrow alt"></div>
+                <!-- <div class="col-lg-3 conversation__user">
+                </div> -->
+            </div>`;
+            switch(sender) {
+                case "rider":
+                    return rider;
+                    break;
+                case "client":
+                    return client;
+                    break;
+            }
+        }
+    </script>
+    <script type="module" src="./firebase.js"></script>
+</body>
+</html>
