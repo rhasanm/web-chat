@@ -118,15 +118,26 @@ export async function read() {
     }
 }
 async function write() {
-    const ref = doc(db, "cities", "LA").withConverter(messageConverter);
-    await setDoc(ref, new Message("Dhaka","Bangladesh","Asia"));
-    await read();
+    try {
+        const ref = doc(db, "cities", "LA").withConverter(messageConverter);
+
+        await setDoc(ref, new Message("Dhaka","Bangladesh","Asia"));
+        await read();
+    } catch(err) {
+        console.log(err);
+        // throw err;
+    }
 }
 // const q = query(citiesRef, orderBy("name", "desc"), limit(3));
 
 // writeMessage();
 // read();
-write();
+try {
+    write();
+} catch(err) {
+    // alert(err);
+    // throw err;
+}
 // readAll();
 // subscribe();
 // queryData();
