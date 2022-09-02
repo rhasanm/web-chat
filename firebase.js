@@ -1,3 +1,7 @@
+import { clearScreen, displayMessage } from "./messenger.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, onSnapshot, query, Timestamp, orderBy } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
+
 class Message {
     constructor(sender, message, timestamp) {
         this.sender = sender;
@@ -5,7 +9,7 @@ class Message {
         this.timestamp = timestamp;
     }
     toString() {
-        return this.sender + 'sent ' + this.message + ' at ' + this.timestamp;
+        return this.sender + ' sent ' + this.message + ' at ' + this.timestamp;
     }
 }
 const messageConverter = {
@@ -21,62 +25,55 @@ const messageConverter = {
         return new Message(data.sender, data.message, data.timestamp);
     }
 }
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
-import { 
-    getFirestore,
-    collection,
-    doc,
-    setDoc,
-    getDoc,
-    getDocs,
-    onSnapshot,
-    query,
-    addDoc,
-    where,
-    limit,
-    Timestamp,
-    orderBy,
-    collectionGroup
-} from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
-const firebaseConfig = {
-  apiKey: "AIzaSyCXpbTwk85O8WdHnMDy6BlQYY_8hZhi8xI",
-  authDomain: "dt-chat-382db.firebaseapp.com",
-  projectId: "dt-chat-382db",
-  storageBucket: "dt-chat-382db.appspot.com",
-  messagingSenderId: "335861675650",
-  appId: "1:335861675650:web:0e7699c3d9be6015e4a69b"
-};
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
-export async function storeMessage(message) {
-    try {
-        const ref = doc(collection(db, "dt-1234")).withConverter(messageConverter);
-        await setDoc(ref, new Message("01844555666", message, Timestamp.now()));
-    } catch(err) {
-        console.log(err);
+export class Firestore {
+    #firebaseConfig = {
+        apiKey: "AIzaSyAAPZSWpQD6MVKhWGA9ZhuQBHBXlYyrPGI",
+        authDomain: "dt-web-chat.firebaseapp.com",
+        projectId: "dt-web-chat",
+        storageBucket: "dt-web-chat.appspot.com",
+        messagingSenderId: "225322971644",
+        appId: "1:225322971644:web:c683eb0a362e55f44a8279",
+        measurementId: "G-909ZY9T869"
+    };
+    constructor(collectionName) {
+        this.app = initializeApp(this.#firebaseConfig);
+        this.db = getFirestore(this.app);
+        this.collection = collection(this.db, collectionName);
+        this.doc = doc(this.collection);
+        
+        this.unsubscribeListener = null;
+        this.subscribe();
     }
-}
-
-export async function subscribe() {
-    try {
-        const recentMessagesQuery = query(collection(db, 'dt-1234'), orderBy("timestamp", "asc"));
-        // const recentMessagesQuery = query(collection(db, 'dt-1234'), where('sender', 'in', ['01819666999', '01844555666']));
-        const unsubscribe = onSnapshot(recentMessagesQuery.withConverter(messageConverter), function(snapshot) {
-            snapshot.docChanges().forEach(function(change) {
-                // if (change.type === 'removed') {
-                    // deleteMessage(change.doc.id);
-                // } else {
-                var message = change.doc.data();
-                console.log(message);
-                displayMessage(message);
-                // }
+    async storeMessage(message, user) {
+        try {
+            const ref = this.doc.withConverter(messageConverter);
+            await setDoc(ref, new Message(user.phone, message, Timestamp.now()));
+        } catch(err) {
+            console.log(err);
+        }
+    }
+    subscribe() {
+        try {
+            // clearScreen();
+            const recentMessagesQuery = query(this.collection, orderBy("timestamp", "asc"));
+            this.unsubscribeListener = onSnapshot(recentMessagesQuery.withConverter(messageConverter), function(snapshot) {
+                snapshot.docChanges().forEach(function(change) {
+                    var message = change.doc.data();
+                    // console.log(message.toString());
+                    displayMessage(message);
+                });
             });
-        });
-        // console.log(typeof(unsubscribe))
-        return unsubscribe;
-    } catch(err) {
-        console.log(err);
+        } catch(err) {
+            console.log(err);
+        }
+    }
+    unsubscribe() {
+        try {
+            // this.unsubscribeListener();
+            this.unsubscribeListener = null;
+        } catch(err) {
+            console.log(err);
+        }
     }
 }
