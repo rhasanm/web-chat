@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function collectionExists(collectionName) {
+      return collectionName.matches('dt-.*');
+    }
+    function validStructuredDataSent(data) {
+      let requiredFields = ['message', 'sender', 'timestamp'];
+      return data.keys().hasOnly(requiredFields);
+    }
+    // match /{document=**} {
+    //   allow read, write: if true;
+    // }
+    match /{collectionName}/{document} {
+      // allow read: if debug(
+      //   debug(collectionExists(collectionName)) // && debug(request.resource.data) && debug("HEELO")
+      // );
+      // allow read: if false;
+      // allow write: if debug(validStructuredData(request))
+      // allow write: if debug(resource.data)
+      allow read: if collectionExists(collectionName);
+      allow write: if collectionExists(collectionName) && validStructuredDataSent(request.resource.data) 
+    }
+    // match /{collectionName}/{documentID}/{document} {
+    //   allow write: if debug(document.sender == "01819555666");
+    // }
+  }
+}

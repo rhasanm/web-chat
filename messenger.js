@@ -2,6 +2,7 @@ import { Firestore } from "./firebase.js";
 
 const messageDates = new Map();
 let newDate = null, dateChanged = null, firsDateSlot = true;
+let notPermitted = false;
 
 class User {
     constructor(type, phone) {
@@ -58,15 +59,22 @@ jQuery(async function($) {
     messageSendButton.click(async function() {
         try {
             const text = chatBox.val();
+            if (!text) {
+                console.log("empty message")
+                return;
+            }
             chatBox.val('');
             // if (firestore.unsubscribeListener == null) {
             //     console.log("unsubscribed")
             //     return;
             // }
             await firestore.storeMessage(text, sender);
+            notPermitted = false;
             messengerBody.animate({ scrollTop: messengerBody[0].scrollHeight + 1000 }, 50);
         } catch(err) {
-            console.log(err)
+            notPermitted = true;
+            permissionDenialModal(err.code.toUpperCase());
+            // console.log(err)
         }
     });
     chatButton.click(function() {
@@ -84,7 +92,7 @@ jQuery(async function($) {
             } else {
                 messenger.css("display", "block");
             }
-            messengerBody.animate({ scrollTop: $('.messenger__body')[0].scrollHeight + 1000 }, 3000);
+            messengerBody.animate({ scrollTop: $('.messenger__body')[0].scrollHeight + 1000 }, 5);
             // if (firestore.unsubscribeListener == null) {
                 // clearScreen();
                 // firestore.subscribe();
@@ -92,9 +100,15 @@ jQuery(async function($) {
             // }
         } catch(err) {
             console.log(err);
+            permissionDenialModal(err.code.toUpperCase());
         }
     })
 });
+
+export function permissionDenialModal(message) {
+    clearScreen();
+    $(".messenger__body").append(`<h3 style="text-align: center">${message}<h3>`)
+}
 
 export function clearScreen() {
     $(".conversation__date").empty();
@@ -102,7 +116,12 @@ export function clearScreen() {
 
 export function displayMessage(content) {
     try {
+        if (notPermitted) {
+            // debugger;
+            return;
+        }
         if (content.sender !== sender.phone && content.sender !== receiver.phone) {
+            // debugger;
             return;
         }
         const messengerBody = $('.messenger__body');
