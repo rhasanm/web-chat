@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delivery Tiger Chat</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css" integrity="sha512-xh6O/CkQoPOWDdYTDqeRdPCVd1SpvCA9XXcUnZS2FmJNp1coAFzvtCN9BmamE+4aHK8yyUHUSCcJHgXloTyT2A==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
     <link rel="stylesheet" href="style.css">
@@ -12,22 +13,27 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="messenger col-lg-4 col-md-4 col-sm-4 col-xs-4" style="display: none;">
+            <div class="messenger" style="display: none;">
                 <div class="row messenger__header">
-                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"><h4>Order Tracking</h4></div>
+                    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 receiver-name"><h4></h4></div>
                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
-                        <div id="crossbar"> 
-                        &times;
+                        <div class="row header__buttons">
+                            <div id="minimizer"> <i class="fa fa-window-minimize" aria-hidden="true"></i></div>
+                            <!-- <div id="maximizer" style="display: none;"> <i class="fa fa-window-maximize" aria-hidden="true"></i></div>   -->
+                            <div id="maximizer" style="display: none;"> 
+                                <i class="far fa-window-maximize"></i>
+                            </div>  
+                            <div id="crossbar"> <i class="fa fa-times" aria-hidden="true"></i></div>
                         </div>
                     </div>
                 </div>
                 <div class="row messenger__body"></div>
                 <div class="row messenger__footer">
-                    <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 message">
+                    <div class="col-lg-10 col-md-10 col-sm-10 col-xs-10 message">
                         <textarea name="message" id="message" cols="30" rows="2" placeholder="Type a message"></textarea>
                     </div>
-                    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">
-                        <button class="message__send"> Send </button>
+                    <div class="col-lg-2 col-md-2 col-sm-2 col-xs-2">
+                        <button class="message__send"> <i class="fa fa-paper-plane" aria-hidden="true"></i> </button>
                     </div>
                 </div>
             </div>

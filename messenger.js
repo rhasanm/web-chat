@@ -116,7 +116,7 @@ jQuery(function($) {
     minimizer.click(function() {
         const currentMessengerHeight = parseInt(messenger.css("height"));
         const currentHeaderHeight =  parseInt(messengerHeader.css("height"))
-        const bufferHeight = (currentMessengerHeight - currentHeaderHeight) || 440;
+        const bufferHeight = (currentMessengerHeight - currentHeaderHeight) + 5 || 440;
         // console.log(messengerHeader.css("height"))
         // console.log(currentMessengerHeight)
         // console.log(`${currentMessengerHeight - currentHeaderHeight}px`);

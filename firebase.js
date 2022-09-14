@@ -1,7 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-auth.js";
 import { connectFirestoreEmulator, getFirestore, collection, doc, getDocs, setDoc, onSnapshot, query, Timestamp, orderBy } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
-import { initializeAppCheck, getToken } from "https://cdnjs.cloudflare.com/ajax/libs/firebase/9.9.2/firebase-app-check.min.js";
+// import { initializeAppCheck, getToken } from "https://cdnjs.cloudflare.com/ajax/libs/firebase/9.9.2/firebase-app-check.min.js";
 
 export class Message {
     constructor(id, message, date, profile, type, url) {
@@ -35,19 +35,19 @@ const messageConverter = {
 
 export class Firestore {
     #firebaseConfig = {
-        apiKey: "AIzaSyAAPZSWpQD6MVKhWGA9ZhuQBHBXlYyrPGI",
-        authDomain: "dt-web-chat.firebaseapp.com",
-        projectId: "dt-web-chat",
-        storageBucket: "dt-web-chat.appspot.com",
-        messagingSenderId: "225322971644",
-        appId: "1:225322971644:web:c683eb0a362e55f44a8279",
-        measurementId: "G-909ZY9T869"
-        // apiKey: "AIzaSyCXpbTwk85O8WdHnMDy6BlQYY_8hZhi8xI",
-        // authDomain: "dt-chat-382db.firebaseapp.com",
-        // projectId: "dt-chat-382db",
-        // storageBucket: "dt-chat-382db.appspot.com",
-        // messagingSenderId: "335861675650",
-        // appId: "1:335861675650:web:0e7699c3d9be6015e4a69b"
+        // apiKey: "AIzaSyAAPZSWpQD6MVKhWGA9ZhuQBHBXlYyrPGI",
+        // authDomain: "dt-web-chat.firebaseapp.com",
+        // projectId: "dt-web-chat",
+        // storageBucket: "dt-web-chat.appspot.com",
+        // messagingSenderId: "225322971644",
+        // appId: "1:225322971644:web:c683eb0a362e55f44a8279",
+        // measurementId: "G-909ZY9T869"
+        apiKey: "AIzaSyCXpbTwk85O8WdHnMDy6BlQYY_8hZhi8xI",
+        authDomain: "dt-chat-382db.firebaseapp.com",
+        projectId: "dt-chat-382db",
+        storageBucket: "dt-chat-382db.appspot.com",
+        messagingSenderId: "335861675650",
+        appId: "1:335861675650:web:0e7699c3d9be6015e4a69b"
     };
     constructor(chat) {
         this.chat = chat;
@@ -89,7 +89,7 @@ export class Firestore {
         );
     }
     setupEmulator() {
-        connectFirestoreEmulator(this.db, 'localhost', 8080);
+        connectFirestoreEmulator(this.db, 'localhost', 8081);
     }
     async storeMessage(data) {
         try {
