@@ -1,4 +1,3 @@
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
 import { connectFirestoreEmulator, getFirestore, collection, doc, getDocs, setDoc, onSnapshot, query, Timestamp, orderBy } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
 import { initializeAppCheck, getToken } from "https://cdnjs.cloudflare.com/ajax/libs/firebase/9.9.2/firebase-app-check.min.js";
