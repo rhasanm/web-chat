@@ -12,7 +12,7 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="messenger col-lg-4 col-md-4 col-sm-4 col-xs-4">
+            <div class="messenger col-lg-4 col-md-4 col-sm-4 col-xs-4" style="display: none;">
                 <div class="row messenger__header">
                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6"><h4>Order Tracking</h4></div>
                     <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
@@ -41,9 +41,21 @@
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <script>
+        const merchant = {
+            id: null,
+            name: "Merchant"
+        };
+        const client = {
+            id: 200,
+            name: "Client"
+        };
+        const chatRoom = "null-200";
         function chat() {
             // modal();
-            window.LoadChat(merchant, client, chatRoom).then(chat => console.log(chat))
+            window.LoadChat(merchant, client, chatRoom).then(chat => {
+                console.log(chat)
+                $(".messenger").attr('style', "display: block !important");
+            });
             // new window.Chat(
             //     new window.User(null, "sender", "01819666555", null ,"Rafiq"),
             //     new window.User(200, "receiver", "01844555666", null, "Shafiq")
