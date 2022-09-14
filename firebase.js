@@ -1,4 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
+import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-auth.js";
 import { connectFirestoreEmulator, getFirestore, collection, doc, getDocs, setDoc, onSnapshot, query, Timestamp, orderBy } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
 import { initializeAppCheck, getToken } from "https://cdnjs.cloudflare.com/ajax/libs/firebase/9.9.2/firebase-app-check.min.js";
 
@@ -57,9 +58,30 @@ export class Firestore {
         
         // this.appCheck();
         // this.setupEmulator();
+        this.anonymousLogIn();
         
         this.unsubscribeListener = null;
         this.subscribe();
+    }
+    anonymousLogIn() {
+        const auth = getAuth(this.app);
+        signInAnonymously(auth)
+        .then(() => {
+            console.log("User Logged In");
+        })
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(error);
+        });
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                const uid = user.uid;
+                console.log(uid);
+            } else {
+                console.log("User is signed out");
+            }
+        });
     }
     appCheck() {
         const appCheck = initializeAppCheck(
