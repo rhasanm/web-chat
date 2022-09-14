@@ -1,56 +1,63 @@
-import { clearScreen, displayMessage, permissionDenialModal } from "./messenger.js";
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
-import { connectFirestoreEmulator, getFirestore, collection, doc, setDoc, onSnapshot, query, Timestamp, orderBy } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
+import { connectFirestoreEmulator, getFirestore, collection, doc, getDocs, setDoc, onSnapshot, query, Timestamp, orderBy } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
 import { initializeAppCheck, getToken } from "https://cdnjs.cloudflare.com/ajax/libs/firebase/9.9.2/firebase-app-check.min.js";
 
-class Message {
-    constructor(sender, message, timestamp) {
-        this.sender = sender;
-        this.message = message;
-        this.timestamp = timestamp;
+export class Message {
+    constructor(id, message, date, profile, type, url) {
+        this.date = date 
+        this.id = id
+        this.message = message
+        this.profile = profile
+        this.type = type
+        this.url = url
     }
     toString() {
-        return this.sender + ' sent ' + this.message + ' at ' + this.timestamp;
+        return this.id + `(profile: ${this.profile})` + ' sent ' + this.message + `(type: ${this.type})` + ' at ' + this.date;
     }
 }
 const messageConverter = {
     toFirestore: (content) => {
         return {
-            sender: content.sender,
+            id: content.id,
+            date: content.date,
             message: content.message,
-            timestamp: content.timestamp
+            profile: content.profile,
+            type: content.type,
+            url: content.url
         };
     },
     fromFirestore: (snapshot, options) => {
         const data = snapshot.data(options);
-        return new Message(data.sender, data.message, data.timestamp);
+        return new Message(data.id, data.message, data.date, data.profile, data.type, data.url);
     }
 }
 
 export class Firestore {
     #firebaseConfig = {
-        // apiKey: "AIzaSyAAPZSWpQD6MVKhWGA9ZhuQBHBXlYyrPGI",
-        // authDomain: "dt-web-chat.firebaseapp.com",
-        // projectId: "dt-web-chat",
-        // storageBucket: "dt-web-chat.appspot.com",
-        // messagingSenderId: "225322971644",
-        // appId: "1:225322971644:web:c683eb0a362e55f44a8279",
-        // measurementId: "G-909ZY9T869"
-        apiKey: "AIzaSyCXpbTwk85O8WdHnMDy6BlQYY_8hZhi8xI",
-        authDomain: "dt-chat-382db.firebaseapp.com",
-        projectId: "dt-chat-382db",
-        storageBucket: "dt-chat-382db.appspot.com",
-        messagingSenderId: "335861675650",
-        appId: "1:335861675650:web:0e7699c3d9be6015e4a69b"
+        apiKey: "AIzaSyAAPZSWpQD6MVKhWGA9ZhuQBHBXlYyrPGI",
+        authDomain: "dt-web-chat.firebaseapp.com",
+        projectId: "dt-web-chat",
+        storageBucket: "dt-web-chat.appspot.com",
+        messagingSenderId: "225322971644",
+        appId: "1:225322971644:web:c683eb0a362e55f44a8279",
+        measurementId: "G-909ZY9T869"
+        // apiKey: "AIzaSyCXpbTwk85O8WdHnMDy6BlQYY_8hZhi8xI",
+        // authDomain: "dt-chat-382db.firebaseapp.com",
+        // projectId: "dt-chat-382db",
+        // storageBucket: "dt-chat-382db.appspot.com",
+        // messagingSenderId: "335861675650",
+        // appId: "1:335861675650:web:0e7699c3d9be6015e4a69b"
     };
-    constructor(collectionName) {
+    constructor(chat) {
+        this.chat = chat;
         this.app = initializeApp(this.#firebaseConfig);
         this.db = getFirestore(this.app);
-        this.collection = collection(this.db, collectionName);
+        this.collection = collection(this.db, chat.room);
         this.doc = doc(this.collection);
         
         // this.appCheck();
-        this.setupEmulator();
+        // this.setupEmulator();
         
         this.unsubscribeListener = null;
         this.subscribe();
@@ -63,27 +70,37 @@ export class Firestore {
     setupEmulator() {
         connectFirestoreEmulator(this.db, 'localhost', 8080);
     }
-    async storeMessage(message, user) {
+    async storeMessage(data) {
         try {
             const ref = this.doc.withConverter(messageConverter);
-            await setDoc(ref, new Message(user.phone, message, Timestamp.now()));
+            await setDoc(ref, new Message(data.id, data.message, data.date, data.profile, data.type, data.url));
         } catch(err) {
+            console.log(err)
             throw err;
         }
     }
+    async readAll() {
+        const querySnapshot = await getDocs(this.collection);
+        querySnapshot.forEach((doc) => {
+            console.log(doc.id, " => ", doc.data());
+        });
+    }
     subscribe() {
-        const recentMessagesQuery = query(this.collection, orderBy("timestamp", "asc"));
+        const chat = this.chat;
+        const recentMessagesQuery = query(this.collection, orderBy("date", "asc"));
         this.unsubscribeListener = onSnapshot(recentMessagesQuery.withConverter(messageConverter), function(snapshot) {
             snapshot.docChanges().forEach(function(change) {
                 var message = change.doc.data();
-                // console.log(message.toString(), new Date(message.timestamp.seconds*1000));
+                // console.log(message.toString(), new Date(message.date.seconds*1000));
                 // console.log(change.doc._document.readTime.timestamp.seconds)
                 // if (!change.doc.metadata.hasPendingWrites) {
-                displayMessage(message);
+                // displayMessage(message);
+                // new Chat().display(message)
+                chat.display(message);
                 // }
             });
         }, function(err) {
-            permissionDenialModal(err.code.toUpperCase());
+            chat.permissionDenialModal(err.code.toUpperCase());
             // console.log(err)
         });
     }
@@ -96,8 +113,3 @@ export class Firestore {
         }
     }
 }
-
-
-// re-captcha3
-// site key: 6LehkswhAAAAAPkTI28yLFw65UiKjNcYJB6GG7V6
-// secret key: 6LehkswhAAAAAIxMNwUeu1mg1CXKNY30bPd6d4Yb
