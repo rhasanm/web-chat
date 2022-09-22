@@ -10,7 +10,7 @@
       "port": 9099
     },
     "firestore": {
-      "port": 8081
+      "port": 8001
     },
     "ui": {
       "enabled": true

@@ -2,7 +2,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase
 import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-auth.js";
 import { connectFirestoreEmulator, getFirestore, collection, doc, getDocs, setDoc, onSnapshot, query, Timestamp, orderBy } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
 // import { initializeAppCheck, getToken } from "https://cdnjs.cloudflare.com/ajax/libs/firebase/9.9.2/firebase-app-check.min.js";
-
+var foo = false;
 export class Message {
     constructor(id, message, date, profile, type, url) {
         this.date = date 
@@ -35,19 +35,19 @@ const messageConverter = {
 
 export class Firestore {
     #firebaseConfig = {
-        // apiKey: "AIzaSyAAPZSWpQD6MVKhWGA9ZhuQBHBXlYyrPGI",
-        // authDomain: "dt-web-chat.firebaseapp.com",
-        // projectId: "dt-web-chat",
-        // storageBucket: "dt-web-chat.appspot.com",
-        // messagingSenderId: "225322971644",
-        // appId: "1:225322971644:web:c683eb0a362e55f44a8279",
+        apiKey: "AIzaSyAAPZSWpQD6MVKhWGA9ZhuQBHBXlYyrPGI",
+        authDomain: "dt-web-chat.firebaseapp.com",
+        projectId: "dt-web-chat",
+        storageBucket: "dt-web-chat.appspot.com",
+        messagingSenderId: "225322971644",
+        appId: "1:225322971644:web:c683eb0a362e55f44a8279",
         // measurementId: "G-909ZY9T869"
-        apiKey: "AIzaSyCXpbTwk85O8WdHnMDy6BlQYY_8hZhi8xI",
-        authDomain: "dt-chat-382db.firebaseapp.com",
-        projectId: "dt-chat-382db",
-        storageBucket: "dt-chat-382db.appspot.com",
-        messagingSenderId: "335861675650",
-        appId: "1:335861675650:web:0e7699c3d9be6015e4a69b"
+        // apiKey: "AIzaSyCXpbTwk85O8WdHnMDy6BlQYY_8hZhi8xI",
+        // authDomain: "dt-chat-382db.firebaseapp.com",
+        // projectId: "dt-chat-382db",
+        // storageBucket: "dt-chat-382db.appspot.com",
+        // messagingSenderId: "335861675650",
+        // appId: "1:335861675650:web:0e7699c3d9be6015e4a69b"
     };
     constructor(chat) {
         this.chat = chat;
@@ -58,7 +58,7 @@ export class Firestore {
         
         // this.appCheck();
         // this.setupEmulator();
-        this.anonymousLogIn();
+        // this.anonymousLogIn();
         
         this.unsubscribeListener = null;
         this.subscribe();
@@ -89,11 +89,19 @@ export class Firestore {
         );
     }
     setupEmulator() {
-        connectFirestoreEmulator(this.db, 'localhost', 8081);
+        if (!foo) {
+            connectFirestoreEmulator(getFirestore(this.app), 'localhost', 8001);
+            console.log(foo)
+            foo=true
+        } else {
+            console.log("This is not going to work")
+            // connectFirestoreEmulator(getFirestore(this.app), 'localhost', 8001);
+            // localStorage.setItem("foo", true);
+        }
     }
     async storeMessage(data) {
         try {
-            const ref = this.doc.withConverter(messageConverter);
+            const ref = doc(collection(this.db, this.chat.room)).withConverter(messageConverter);
             await setDoc(ref, new Message(data.id, data.message, data.date, data.profile, data.type, data.url));
         } catch(err) {
             console.log(err)
@@ -108,7 +116,9 @@ export class Firestore {
     }
     subscribe() {
         const chat = this.chat;
-        const recentMessagesQuery = query(this.collection, orderBy("date", "asc"));
+        const recentMessagesQuery = query(collection(this.db, chat.room), orderBy("date", "asc"));
+        // const recentMessagesQuery = query(this.collection, orderBy("date", "asc"));
+
         this.unsubscribeListener = onSnapshot(recentMessagesQuery.withConverter(messageConverter), function(snapshot) {
             snapshot.docChanges().forEach(function(change) {
                 var message = change.doc.data();
@@ -122,7 +132,7 @@ export class Firestore {
             });
         }, function(err) {
             chat.permissionDenialModal(err.code.toUpperCase());
-            // console.log(err)
+            console.log(err)
         });
     }
     unsubscribe() {

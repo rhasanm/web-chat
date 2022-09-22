@@ -38,7 +38,7 @@ class Chat {
             }
             // user validation
             const messengerBody = $('.messenger__body');
-            const sentBy = this.user1.type == "sender" ? "sender" : "receiver";
+            const sentBy = this.user1.id == content.id ? "sender" : "receiver";
             const timestamp = new Date(content.date) == "Invalid Date"
                             ? new Date(content.date.seconds*1000) : new Date(content.date);
             const [day, month, year, hour, minute] = 
@@ -71,8 +71,8 @@ class Chat {
 
 jQuery(function($) {
     var chat;
-    window.Chat = Chat;
-    window.User = User;
+    // window.Chat = Chat;
+    // window.User = User;
     window.LoadChat = (user1, user2, chatRoom) => new Promise(res => {
         if (chat) {
             res(chat);
