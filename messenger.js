@@ -20,12 +20,12 @@ class Chat {
         this.user2 = user2;
 
         // this.room = `/chat/dt-bondhu/room/p2p/${this.user1.id}-${this.user2.id}`;
-        this.room = `/chat/dt-bondhu/room/p2p/${chatRoom}`
+        this.room = `/chat/dt-guest/room/p2p/${chatRoom}`
         this.firestore = new Firestore(this);
     }
     async send(message) {
         try {
-            const content = new Message(this.user1.id, message, new Date(), 'asdf', 'msg', 'adsf');
+            const content = new Message(this.user1.id, message, new Date(), "", 'msg', window.location.href);
             await this.firestore.storeMessage(content);
         } catch(err) {
             throw err;
@@ -38,14 +38,19 @@ class Chat {
             }
             // user validation
             const messengerBody = $('.messenger__body');
+            // const sentBy = this.user1.type == "sender" ? "sender" : "receiver";
             const sentBy = this.user1.id == content.id ? "sender" : "receiver";
             const timestamp = new Date(content.date) == "Invalid Date"
                             ? new Date(content.date.seconds*1000) : new Date(content.date);
             const [day, month, year, hour, minute] = 
                 [timestamp.getDay(), timestamp.getMonth(), timestamp.getFullYear(), timestamp.getHours(), timestamp.getMinutes()];
-            const today = new Date();
-            const date = today.getDay() == day && today.getMonth() == month && today.getFullYear() == year 
-                        ? "Today" : (day + '/' + month + '/' + year);
+
+            // console.log(timestamp.toLocaleDateString("en-Bn"), day, month, year)
+
+            // const today = new Date();
+            // const date = today.getDay() == day && today.getMonth() == month && today.getFullYear() == year 
+            //             ? "Today" : (day + '/' + month + '/' + year);
+            const date = timestamp.toLocaleDateString("en-Bn");
             dateChanged = messageDates.get(date);
             const sentAt = hour > 12 
                 ? `${(hour - 12).toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} pm` 
@@ -71,11 +76,15 @@ class Chat {
 
 jQuery(function($) {
     var chat;
-    // window.Chat = Chat;
-    // window.User = User;
-    window.LoadChat = (user1, user2, chatRoom) => new Promise(res => {
+    window.Chat = Chat;
+    window.User = User;
+    window.LoadChat = (user1, user2, chatRoom) => new Promise((resolve, reject) => {
         if (chat) {
-            res(chat);
+            resolve(chat);
+            return;
+        }
+        if (invalidUsers(user1, user2)) {
+            reject("unauthorized request");
             return;
         }
         chat = new Chat(
@@ -83,9 +92,9 @@ jQuery(function($) {
             new User(user2.id, user2.type, user2.phone || null, user2.profile || null, user2.name),
             chatRoom
         );
-        const receiverName = $(".receiver-name h4");
+        const receiverName = $(".receiver-name span");
         receiverName.text(chat.user1.type == "receiver" ? chat.user1.name : chat.user2.name);
-        res(chat);
+        resolve(chat);
         return;
     })
     const messengerBody = $('.messenger__body');
@@ -95,7 +104,7 @@ jQuery(function($) {
     const maximizer = $("#maximizer");
     const messageSendButton = $(".message__send");
     const messengerHeader = $(".messenger__header");
-    const chatButton = $(".chat-button");
+    const chatButton = $(".merchant-chat-button");
     const messenger = $(".messenger");
 
     messengerBody.scroll(function() {
@@ -116,7 +125,7 @@ jQuery(function($) {
     minimizer.click(function() {
         const currentMessengerHeight = parseInt(messenger.css("height"));
         const currentHeaderHeight =  parseInt(messengerHeader.css("height"))
-        const bufferHeight = (currentMessengerHeight - currentHeaderHeight) + 5 || 440;
+        const bufferHeight = (currentMessengerHeight - currentHeaderHeight + 7) || 440;
         // console.log(messengerHeader.css("height"))
         // console.log(currentMessengerHeight)
         // console.log(`${currentMessengerHeight - currentHeaderHeight}px`);
@@ -176,6 +185,7 @@ function clearScreen() {
 
 function newTimestamp(timestamp) {
     const date = $(`<div class="conversation__date"></div>`);
+    firstDateSlot = false;
     const divider = !firstDateSlot 
         ? $(`<div class="divider"><span class="date"> ${timestamp} </span></div>`)
         : $(`<div class="divider"><span class="date" id="divider__top" style="opacity: 0;"> ${timestamp} </span></div>`)
@@ -208,4 +218,8 @@ function bindNewMessage(sentBy, message, timestamp = null, sentAt = null) {
     } else {
         return $(sentBy == 'receiver' ? receiver : sender);
     }
+}
+
+function invalidUsers(user1, user2) {
+    return (!user1.id) || (!user2.id);
 }
