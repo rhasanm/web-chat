@@ -1,4 +1,4 @@
-A web app chat bot using jQuery, HTML, CSS, JS, Firebase Firestore
+A web chat app using jQuery, HTML, CSS, JS, Firebase Firestore
 
 <img src="https://github.com/rakibulhasanmasum/web-chat/blob/master/public/img/ss.png" alt="screenshot" style="max-width: 100%; height: 600px;">
 
