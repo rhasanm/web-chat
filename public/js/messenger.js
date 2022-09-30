@@ -104,7 +104,7 @@ jQuery(function($) {
     const maximizer = $("#maximizer");
     const messageSendButton = $(".message__send");
     const messengerHeader = $(".messenger__header");
-    const chatButton = $(".merchant-chat-button");
+    const chatButton = $(".btn");
     const messenger = $(".messenger");
 
     messengerBody.scroll(function() {

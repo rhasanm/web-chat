@@ -34,7 +34,13 @@ const messageConverter = {
 
 export class Firestore {
     #firebaseConfig = {
-    
+        apiKey: "AIzaSyCXpbTwk85O8WdHnMDy6BlQYY_8hZhi8xI",
+        authDomain: "dt-chat-382db.firebaseapp.com",
+        databaseURL: "https://dt-chat-382db-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "dt-chat-382db",
+        storageBucket: "dt-chat-382db.appspot.com",
+        messagingSenderId: "335861675650",
+        appId: "1:335861675650:web:0e7699c3d9be6015e4a69b"
     };
     constructor(chat) {
         this.chat = chat;
