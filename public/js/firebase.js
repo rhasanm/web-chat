@@ -32,6 +32,34 @@ const messageConverter = {
     }
 }
 
+export class History {
+    constructor(receiverName, senderName, msg, seenStatus, datetime) {
+        this.receiverName = receiverName 
+        this.senderName = senderName
+        this.msg = msg
+        this.seenStatus = seenStatus
+        this.datetime = datetime
+    }
+    toString() {
+        return this.id + `(profile: ${this.profile})` + ' sent ' + this.message + `(type: ${this.type})` + ' at ' + this.date;
+    }
+}
+const historyConverter = {
+    toFirestore: (content) => {
+        return {
+            receiverName: content.receiverName,
+            senderName: content.senderName,
+            msg: content.msg,
+            seenStatus: content.seenStatus,
+            datetime: content.datetime
+        };
+    },
+    fromFirestore: (snapshot, options) => {
+        const data = snapshot.data(options);
+        return new History(data.receiverName, data.senderName, data.msg, data.seenStatus, data.datetime);
+    }
+}
+
 export class Firestore {
     #firebaseConfig = {
         apiKey: "AIzaSyCXpbTwk85O8WdHnMDy6BlQYY_8hZhi8xI",
@@ -49,6 +77,11 @@ export class Firestore {
         this.collection = collection(this.db, chat.room);
         this.doc = doc(this.collection);
         
+        this.merchantHistoryCollection = collection(this.db, chat.history + `/merchant/${chat.user2.id}`)
+        this.merchantHistoryDoc = doc(this.db, chat.history + `/merchant/${chat.user2.id}`, chat.user1.id)
+
+        this.clientHistoryCollection = collection(this.db, chat.history + `/client/${chat.user1.id}`)
+        this.clientHistoryDoc = doc(this.db, chat.history + `/client/${chat.user1.id}`, chat.user2.id)
         // this.appCheck();
         // this.setupEmulator();
         
@@ -66,7 +99,11 @@ export class Firestore {
     async storeMessage(data) {
         try {
             const ref = this.doc.withConverter(messageConverter);
+            const merchantHistoryRef = this.merchantHistoryDoc.withConverter(historyConverter)
+            const clientHistoryRef = this.clientHistoryDoc.withConverter(historyConverter)
             await setDoc(ref, new Message(data.id, data.message, data.date, data.profile, data.type, data.url));
+            await setDoc(merchantHistoryRef, new History(this.chat.user1.id, this.chat.user2.id, data.message, 0, data.date), {merge: true})
+            await setDoc(clientHistoryRef, new History(this.chat.user2.id, this.chat.user1.id, data.message, 1, data.date), {merge: true})
         } catch(err) {
             console.log(err)
             throw err;

@@ -21,6 +21,7 @@ class Chat {
 
         // this.room = `/chat/dt-bondhu/room/p2p/${this.user1.id}-${this.user2.id}`;
         this.room = `/chat/dt-guest/room/p2p/${chatRoom}`
+        this.history = `/chat/dt-guest/history`
         this.firestore = new Firestore(this);
     }
     async send(message) {
