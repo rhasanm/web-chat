@@ -102,7 +102,7 @@ export class Firestore {
             const merchantHistoryRef = this.merchantHistoryDoc.withConverter(historyConverter)
             const clientHistoryRef = this.clientHistoryDoc.withConverter(historyConverter)
 
-            await addDoc(this.collection, {id: data.id, message: data.message, date: data.date, profile: data.profile, type: data.type, url: data.url});
+            await addDoc(this.collection, messageConverter.toFirestore(data));
             await setDoc(merchantHistoryRef, new History(this.chat.user1.id, this.chat.user2.id, data.message, 0, data.date), {merge: true})
             await setDoc(clientHistoryRef, new History(this.chat.user2.id, this.chat.user1.id, data.message, 1, data.date), {merge: true})
         } catch(err) {
