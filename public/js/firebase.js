@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
-import { connectFirestoreEmulator, getFirestore, collection, doc, getDocs, setDoc, onSnapshot, query, Timestamp, orderBy } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
+import { connectFirestoreEmulator, getFirestore, collection, doc, getDocs, setDoc, onSnapshot, query, Timestamp, orderBy, addDoc } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
 import { initializeAppCheck, getToken } from "https://cdnjs.cloudflare.com/ajax/libs/firebase/9.9.2/firebase-app-check.min.js";
 
 export class Message {
@@ -101,7 +101,8 @@ export class Firestore {
             const ref = this.doc.withConverter(messageConverter);
             const merchantHistoryRef = this.merchantHistoryDoc.withConverter(historyConverter)
             const clientHistoryRef = this.clientHistoryDoc.withConverter(historyConverter)
-            await setDoc(ref, new Message(data.id, data.message, data.date, data.profile, data.type, data.url));
+
+            await addDoc(this.collection, {id: data.id, message: data.message, date: data.date, profile: data.profile, type: data.type, url: data.url});
             await setDoc(merchantHistoryRef, new History(this.chat.user1.id, this.chat.user2.id, data.message, 0, data.date), {merge: true})
             await setDoc(clientHistoryRef, new History(this.chat.user2.id, this.chat.user1.id, data.message, 1, data.date), {merge: true})
         } catch(err) {
