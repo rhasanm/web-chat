@@ -206,6 +206,12 @@
         .chat__box--body {
             height: 88%;
         }
+
+        .history.message {
+            background-color: #1362b3;
+            padding: 5px;
+            margin: 5px;
+        }
     </style>
 </head>
 <body>
@@ -246,7 +252,7 @@
             </ul>
         </div>
         <div class="chat__box--body p2p">
-            <app-p2p [message]="finalMessage" [receiverName]="receiverName"></app-p2p>
+
         </div>
         <div class="chat__box--footer all-messages">
         </div>
@@ -262,24 +268,514 @@
             </div>
         </div>
     </div>
-    <!-- p2p -->
-    <script type="module">
-
-    </script>
-    
-    <!-- all-messages -->
-    <script type="module">
-
-    </script>
-
-    <!-- messenger.js -->
-    <script type="module">
-
-    </script>
-
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
     <!-- firebase.js -->
     <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
+        import { connectFirestoreEmulator, getFirestore, collection, doc, getDocs, setDoc, onSnapshot, query, Timestamp, orderBy, addDoc } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
+        import { initializeAppCheck, getToken } from "https://cdnjs.cloudflare.com/ajax/libs/firebase/9.9.2/firebase-app-check.min.js";
 
+        export class Message {
+            constructor(id, message, date, profile, type, url) {
+                this.date = date 
+                this.id = id
+                this.message = message
+                this.profile = profile
+                this.type = type
+                this.url = url
+            }
+            toString() {
+                return this.id + `(profile: ${this.profile})` + ' sent ' + this.message + `(type: ${this.type})` + ' at ' + this.date;
+            }
+        }
+        const messageConverter = {
+            toFirestore: (content) => {
+                return {
+                    id: content.id,
+                    date: content.date,
+                    message: content.message,
+                    profile: content.profile,
+                    type: content.type,
+                    url: content.url
+                };
+            },
+            fromFirestore: (snapshot, options) => {
+                const data = snapshot.data(options);
+                return new Message(data.id, data.message, data.date, data.profile, data.type, data.url);
+            }
+        }
+
+        class History {
+            constructor(receiverName, senderName, msg, seenStatus, datetime) {
+                this.receiverName = receiverName 
+                this.senderName = senderName
+                this.msg = msg
+                this.seenStatus = seenStatus
+                this.datetime = datetime
+            }
+            toString() {
+                return this.id + `(profile: ${this.profile})` + ' sent ' + this.message + `(type: ${this.type})` + ' at ' + this.date;
+            }
+        }
+        const historyConverter = {
+            toFirestore: (content) => {
+                return {
+                    receiverName: content.receiverName,
+                    senderName: content.senderName,
+                    msg: content.msg,
+                    seenStatus: content.seenStatus,
+                    datetime: content.datetime
+                };
+            },
+            fromFirestore: (snapshot, options) => {
+                const data = snapshot.data(options);
+                return new History(data.receiverName, data.senderName, data.msg, data.seenStatus, data.datetime);
+            }
+        }
+
+        class Firestore {
+            #firebaseConfig = {
+                apiKey: "AIzaSyCXpbTwk85O8WdHnMDy6BlQYY_8hZhi8xI",
+                authDomain: "dt-chat-382db.firebaseapp.com",
+                databaseURL: "https://dt-chat-382db-default-rtdb.asia-southeast1.firebasedatabase.app",
+                projectId: "dt-chat-382db",
+                storageBucket: "dt-chat-382db.appspot.com",
+                messagingSenderId: "335861675650",
+                appId: "1:335861675650:web:0e7699c3d9be6015e4a69b"
+            };
+            constructor() {
+                this.app = initializeApp(this.#firebaseConfig);
+                this.db = getFirestore(this.app);
+
+                this.room = `/chat/dt-guest/room/p2p/`
+                this.history = `/chat/dt-guest/history`
+
+                // this.appCheck();
+                // this.setupEmulator();
+                
+                this.unsubscribeListener = null;
+                this.unsubscribeListenerHistory = null;
+
+                // this.subscribe();
+            }
+
+            set p2pCollectionDoc(room) {
+                console.log(this.room + room)
+                this.collection = collection(this.db, this.room + room);
+                this.doc = doc(this.collection);
+            }
+
+            set merchantCollection(user) {
+                const newHistory = this.history + `/merchant/${user.id}`;
+                this.merchantHistoryCollection = collection(this.db, newHistory)
+            }
+
+            set merchantDoc(chat) {
+                this.merchantHistoryDoc = doc(this.db, chat.history + `/merchant/${chat.user2.id}`, chat.user1.id)
+            }
+
+            set clientCollection(user) {
+                this.clientHistoryCollection = collection(this.db, this.history + `/client/${user.id}`)
+            }
+
+            set clientDoc(chat) {
+                this.clientHistoryDoc = doc(this.db, chat.history + `/client/${chat.user1.id}`, chat.user2.id)
+            }
+
+            appCheck() {
+                const appCheck = initializeAppCheck(
+                    this.app, { provider: ReCaptchaV3Provider } // ReCaptchaV3Provider or CustomProvider
+                );
+            }
+            setupEmulator() {
+                connectFirestoreEmulator(this.db, 'localhost', 8080);
+            }
+        }
+
+        class HistoryFirestore extends Firestore {
+            constructor() {
+                super();
+            }
+            subscribe() {
+                const recentMessagesQuery = query(this.merchantHistoryCollection, orderBy("datetime", "desc"));
+                this.unsubscribeListenerHistory = onSnapshot(recentMessagesQuery.withConverter(historyConverter), function(snapshot) {
+                    snapshot.docChanges().forEach(function(change) {
+                        var history = change.doc.data();
+                        // console.log(change.doc._document.readTime.timestamp.seconds)
+                        // if (!change.doc.metadata.hasPendingWrites) {
+                        // displayMessage(message);
+                        displayHistory(history);
+                        // new Chat().display(message)
+                        // chat.display(message);
+                        // }
+                    });
+                }, function(err) {
+                    chat.permissionDenialModal(err.code.toUpperCase());
+                    // console.log(err)
+                });
+            }
+            unsubscribe() {
+                try {
+                    // this.unsubscribeListener();
+                    this.unsubscribeListenerHistory = null;
+                } catch(err) {
+                    console.log(err);
+                }
+            }
+        }
+
+        class P2PFirestore extends Firestore {
+            constructor() {
+                super();
+            }
+            async storeMessage(data) {
+                try {
+                    const ref = this.doc.withConverter(messageConverter);
+                    const merchantHistoryRef = this.merchantHistoryDoc.withConverter(historyConverter)
+                    const clientHistoryRef = this.clientHistoryDoc.withConverter(historyConverter)
+
+                    await addDoc(this.collection, messageConverter.toFirestore(data));
+                    await setDoc(merchantHistoryRef, new History(this.user1.id, this.user2.id, data.message, 0, data.date), {merge: true})
+                    await setDoc(clientHistoryRef, new History(this.user2.id, this.user1.id, data.message, 1, data.date), {merge: true})
+                } catch(err) {
+                    console.log(err)
+                    throw err;
+                }
+            }
+            async readAll() {
+                const querySnapshot = await getDocs(this.collection);
+                querySnapshot.forEach((doc) => {
+                    console.log(doc.id, " => ", doc.data());
+                });
+            }
+            subscribe() {
+                const chat = this.chat;
+                const recentMessagesQuery = query(this.collection, orderBy("date", "asc"));
+                this.unsubscribeListener = onSnapshot(recentMessagesQuery.withConverter(messageConverter), function(snapshot) {
+                    snapshot.docChanges().forEach(function(change) {
+                        var message = change.doc.data();
+                        // console.log(message.toString(), new Date(message.date.seconds*1000));
+                        // console.log(change.doc._document.readTime.timestamp.seconds)
+                        // if (!change.doc.metadata.hasPendingWrites) {
+                        displayMessage(message);
+                        // new Chat().display(message)
+                        // chat.display(message);
+                        // }
+                    });
+                }, function(err) {
+                    chat.permissionDenialModal(err.code.toUpperCase());
+                    // console.log(err)
+                });
+            }
+            unsubscribe() {
+                try {
+                    // this.unsubscribeListener();
+                    this.unsubscribeListener = null;
+                } catch(err) {
+                    console.log(err);
+                }
+            }
+        }
+        window.HistoryFirestore = HistoryFirestore;
+        window.P2PFirestore = P2PFirestore;
+    </script>
+    <!-- all-messages -->
+    <script type="module">
+        let historyChat;
+        class ChatHistory {
+            constructor(user) {
+                this.history = new HistoryFirestore();
+                this.history.merchantCollection = user;
+                this.history.subscribe();
+            }
+        }
+
+        window.displayHistory = (history) => {
+            const body = $(".chat__box--body.all-messages");
+            const room = {
+                clientName: history.receiverName,
+                merchantName: history.senderName
+            };
+            body.append(`
+                <div class="history message" onclick=p2pChat('${encodeURIComponent(JSON.stringify(room))}')>
+                    <div>
+                        ${history.receiverName}
+                    </div>
+                    <div>
+                        ${history.msg.substr(0, 30)}
+                    </div>
+                </div>
+            `);
+        }
+
+        window.LoadHistory = (user) => new Promise((resolve, reject) => {
+            if (historyChat) {
+                resolve(historyChat);
+                return;
+            }
+            historyChat = new ChatHistory(user);
+            resolve(historyChat);
+        })
+    </script>
+    <!-- p2p -->
+    <script type="module">
+        const p2p = new P2PFirestore();
+        const messageDates = new Map();
+        let newDate = null, dateChanged = null, firstDateSlot = true;
+        let chatRoom = null;
+        const p2pChat = (room) => {
+            room = JSON.parse(decodeURIComponent(room))
+            chatRoom = room;
+            p2p.p2pCollectionDoc = `${room.merchantName}-${room.clientName}`;
+            $(".receiver-name.p2p span:last-child").text( room.clientName );
+            p2p.subscribe();
+        }
+        function display(content) {
+            try {
+                $(".all-messages").attr('style', 'display: none !important')
+                const messengerBody = $('.chat__box--body.p2p');
+                $(".p2p").attr('style', 'display: block !important');
+                // const sentBy = this.user1.type == "sender" ? "sender" : "receiver";
+                const sentBy = chatRoom.merchantName == content.id ? "sender" : "receiver";
+                const timestamp = new Date(content.date) == "Invalid Date"
+                                ? new Date(content.date.seconds*1000) : new Date(content.date);
+                const [day, month, year, hour, minute] = 
+                    [timestamp.getDay(), timestamp.getMonth(), timestamp.getFullYear(), timestamp.getHours(), timestamp.getMinutes()];
+
+                // console.log(timestamp.toLocaleDateString("en-Bn"), day, month, year)
+
+                // const today = new Date();
+                // const date = today.getDay() == day && today.getMonth() == month && today.getFullYear() == year 
+                //             ? "Today" : (day + '/' + month + '/' + year);
+                const date = timestamp.toLocaleDateString("en-Bn");
+                dateChanged = messageDates.get(date);
+                const sentAt = hour > 12 
+                    ? `${(hour - 12).toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} pm` 
+                    : `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} am`;
+
+                messengerBody.append(`<div>${content.message}</div>`);
+                if (!dateChanged) {
+                    // newDate = newTimestamp(date);
+                    // messengerBody.append(bindNewMessage(sentBy, content.message, newDate, sentAt));
+                    // messageDates.set(date, true);                    
+                } else {
+                    // newDate.append(
+                    // const message = bindNewMessage(sentBy, content.message, null, sentAt)
+                    // )
+                    // messengerBody.append(newDate)
+                    // console.log(message)
+                    messengerBody.append(message);
+                }
+                // messengerBody.animate({ scrollTop: messengerBody[0].scrollHeight + 1000 }, 50);
+            } catch(err) {
+                throw err;
+            }
+        }
+        function newTimestamp(timestamp) {
+            const date = $(`<div class="conversation__date"></div>`);
+            firstDateSlot = false;
+            const divider = !firstDateSlot 
+                ? $(`<div class="divider"><span class="date"> ${timestamp} </span></div>`)
+                : $(`<div class="divider"><span class="date" id="divider__top" style="opacity: 0;"> ${timestamp} </span></div>`)
+            firstDateSlot = false;
+            date.append(divider);
+            return date;
+        }
+        function bindNewMessage(sentBy, message, timestamp = null, sentAt = null) {
+            const sender = `<div class="row conversation sender">
+                <!-- <div class="col-lg-3 conversation__user">
+                </div> -->
+                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 pull-right conversation__text">
+                    <span> ${message} </span> 
+                    <span class="timestamp">${sentAt}</span>
+                </div>
+                <div class="bubble-arrow alt"></div>
+            </div>`;
+            const receiver = `<div class="row conversation receiver">
+                <div class="col-lg-9 col-md-9 col-sm-9 col-xs-9 conversation__text">
+                    <span>${message}</span> 
+                    <span class="timestamp">${sentAt}</span>
+                </div>
+                <div class="bubble-arrow"></div>
+                <!-- <div class="col-lg-3 conversation__user">
+                </div> -->
+            </div>`;
+            if (timestamp) {
+                timestamp.append(sentBy == 'receiver' ? receiver : sender)
+                return timestamp;
+            } else {
+                return $(sentBy == 'receiver' ? receiver : sender);
+            }
+        }
+        function invalidUsers(user1, user2) {
+            return (!user1.id) || (!user2.id);
+        }
+
+        window.displayMessage = display;
+        window.p2pChat = p2pChat;
+    </script>
+    <!-- messenger.js -->
+    <script type="module">
+        class User {
+            constructor(id, type, phone, profile, name) {
+                this.id = id;
+                this.name = name;
+                this.type = type;
+                this.phone = phone;
+                this.profile = profile;
+            }
+        }
+
+        class Chat {
+            constructor(user1, user2) {
+                this.user1 = user1;
+                this.user2 = user2;
+
+                p2p.p2pCollectionDoc = `${user1.id}-${user2.id}`;
+                p2p.subscribe();
+            }
+            async send(message) {
+                try {
+                    const content = new Message(this.user1.id, message, new Date(), "", 'msg', window.location.href);
+                    await firestore.storeMessage(content);
+                } catch(err) {
+                    throw err;
+                }
+            }
+            permissionDenialModal(message) {
+                clearScreen();
+                $(".messenger__body").append(`<h3 style="text-align: center">${message}<h3>`)
+            }
+        }
+
+        jQuery(function($) {
+            let chat;
+            window.Chat = Chat;
+            window.User = User;
+            window.LoadChat = (user1, user2) => new Promise((resolve, reject) => {
+                if (chat) {
+                    resolve(chat);
+                    return;
+                }
+                if (invalidUsers(user1, user2)) {
+                    reject("unauthorized request");
+                    return;
+                }
+                chat = new Chat(
+                    new User(user1.id, user1.type, user1.phone || null, user1.profile || null, user1.name),
+                    new User(user2.id, user2.type, user2.phone || null, user2.profile || null, user2.name),
+                );
+                const receiverName = $(".receiver-name span");
+                receiverName.text(chat.user1.type == "receiver" ? chat.user1.name : chat.user2.name);
+                resolve(chat);
+                return;
+            })
+            const messengerBody = $('.messenger__body');
+            const chatBox = $('#message');
+            const crossBar = $('#crossbar');
+            const minimizer = $('#minimizer');
+            const maximizer = $("#maximizer");
+            const messageSendButton = $(".message__send");
+            const messengerHeader = $(".messenger__header");
+            const chatButton = $(".btn");
+            const messenger = $(".messenger");
+
+            messengerBody.scroll(function() {
+                let currentLabel = null;
+                const topLabel = $("#divider__top");
+                $(".divider").each(function(_, el) {
+                    if (messengerBody.scrollTop() >= $(el).offset().top) {
+                        currentLabel = el;
+                    }
+                });
+                if (currentLabel) {
+                    $(topLabel).css({"opacity": 1});
+                    topLabel.textContent = $.trim(currentLabel.textContent)
+                } else {
+                    $(topLabel).css("opacity", 0);
+                }
+            });
+            minimizer.click(function() {
+                const currentMessengerHeight = parseInt(messenger.css("height"));
+                const currentHeaderHeight =  parseInt(messengerHeader.css("height"))
+                const bufferHeight = (currentMessengerHeight - currentHeaderHeight + 7) || 440;
+                // console.log(messengerHeader.css("height"))
+                // console.log(currentMessengerHeight)
+                // console.log(`${currentMessengerHeight - currentHeaderHeight}px`);
+                messenger.css({"bottom": `-${bufferHeight}px`});
+                minimizer.attr('style', 'display: none !important')
+                maximizer.attr('style', 'display: block !important')
+            });
+
+            maximizer.click(function() {
+                messenger.css({"bottom": "0px"});
+                maximizer.attr('style', 'display: none !important')
+                minimizer.attr('style', 'display: block !important')
+            })
+            crossBar.click(function() {
+                // const currentMessengerHeight = parseInt(messenger.css("height"));
+                // const currentHeaderHeight =  parseInt(messengerHeader.css("height"))
+                // const bufferHeight = (currentMessengerHeight - currentHeaderHeight) || 500;
+                
+                messenger.css({"bottom": "-1000px"});
+                maximizer.attr('style', 'display: none !important');
+                minimizer.attr('style', 'display: block !important');
+                chatBox.val('');
+            })
+            messageSendButton.click(async function() {
+                try {
+                    const text = chatBox.val();
+                    if (!text) {
+                        console.log("empty message")
+                        return;
+                    }
+                    chatBox.val('');
+                    await chat.send(text);
+                    notPermitted = false;
+                    messengerBody.animate({ scrollTop: messengerBody[0].scrollHeight + 1000 }, 50);
+                } catch(err) {
+                    notPermitted = true;
+                    console.log(err)
+                    chat.permissionDenialModal(err.code.toUpperCase());
+                }
+            });
+            chatButton.click(function() {
+                try {
+                    messenger.attr('style', 'display: block !important');
+                    maximizer.attr('style', 'display: none !important')
+                    minimizer.attr('style', 'display: block !important')
+                    messenger.css({"bottom": "0px"});
+                    messengerBody.animate({ scrollTop: $('.messenger__body')[0].scrollHeight + 1000 }, 5);
+                } catch(err) {
+                    chat.permissionDenialModal(err.code.toUpperCase());
+                }
+            })
+        });
+
+        function clearScreen() {
+            $(".conversation__date").empty();
+        }
+
+    </script>
+    <script>
+        function maximizeChatBox() {
+            const courierName = "pet shop bd"
+            const merchant = { id: courierName, type: "receiver", name: courierName };
+            try {
+                window
+                    .LoadHistory(merchant)
+                    .then(history => console.log(history))
+                    .catch(err => { console.log(err) })
+            } catch(err) {
+                console.log(err);
+            }
+        }
+
+        function p2pReset() {
+            $(".p2p").attr('style', 'display: none !important')
+            $(".all-messages").attr('style', 'display: block !important')
+            $(".chat__box--body.p2p").empty();
+        }
     </script>
 </body>
 </html>
