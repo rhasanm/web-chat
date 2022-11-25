@@ -397,10 +397,22 @@
                 super();
             }
             subscribe() {
-                const recentMessagesQuery = query(this.merchantHistoryCollection, orderBy("datetime", "desc"));
+                const recentMessagesQuery = query(this.merchantHistoryCollection, orderBy("datetime", "asc"));
                 this.unsubscribeListenerHistory = onSnapshot(recentMessagesQuery.withConverter(historyConverter), function(snapshot) {
                     snapshot.docChanges().forEach(function(change) {
                         var history = change.doc.data();
+                        if (change.type === "added") {
+                            // console.log("New city: ", change.doc.data());
+                            // displayHistory(history);
+                        }
+                        if (change.type === "modified") {
+                            removePreviousHistory(change.doc.data());
+                            // displayHistory(history);
+                            // console.log("Modified city: ", change.doc.data());
+                        }
+                        // if (change.type === "removed") {
+                        //     console.log("Removed city: ", change.doc.data());
+                        // }
                         // console.log(change.doc._document.readTime.timestamp.seconds)
                         // if (!change.doc.metadata.hasPendingWrites) {
                         // displayMessage(message);
@@ -445,7 +457,7 @@
             async readAll() {
                 const querySnapshot = await getDocs(this.collection);
                 querySnapshot.forEach((doc) => {
-                    console.log(doc.id, " => ", doc.data());
+                    // console.log(doc.id, " => ", doc.data());
                 });
             }
             subscribe() {
@@ -496,9 +508,9 @@
                 clientName: history.receiverName,
                 merchantName: history.senderName
             };
-            body.append(`
+            body.prepend(`
                 <div class="history message" onclick=p2pChat('${encodeURIComponent(JSON.stringify(room))}')>
-                    <div>
+                    <div class="history--receiver-name">
                         ${history.receiverName}
                     </div>
                     <div>
@@ -506,6 +518,13 @@
                     </div>
                 </div>
             `);
+        }
+
+        window.removePreviousHistory = (history) => {
+            const body = $(".chat__box--body.all-messages");
+            const candidateNode = $(".history .history--receiver-name:contains('"+ history.receiverName +"')").parent();
+            // candidateNode.fadeOut();
+            candidateNode.hide();
         }
 
         window.LoadHistory = (user) => new Promise((resolve, reject) => {
@@ -735,7 +754,7 @@
                     messengerBody.animate({ scrollTop: messengerBody[0].scrollHeight + 1000 }, 50);
                 } catch(err) {
                     notPermitted = true;
-                    console.log(err)
+                    // console.log(err)
                     chat.permissionDenialModal(err.code.toUpperCase());
                 }
             });
