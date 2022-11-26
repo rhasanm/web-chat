@@ -7,9 +7,11 @@
     <title>chat</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
         body {
             height: 100vh;
-            font-family: 'Poppins', sans-serif;
+            /* font-family: 'Poppins', sans-serif; */
+            font-family: 'Source Sans Pro', sans-serif;
         }
         #chat {
             position: sticky;
@@ -208,10 +210,58 @@
         }
 
         .history.message {
-            background-color: #1362b3;
+            /* background-color: #1362b3; */
             padding: 5px;
             margin: 5px;
+            position: relative;
         }
+
+        .history.message:hover {
+            background-color: rgba(0, 0, 0, 0.03);
+            cursor: pointer;
+        }
+
+        .history--receiver-name {
+            font-size: 17px;
+            font-weight: bold;
+        }
+        .history--message {
+            font-size: 14px;
+            font-weight: inherit;
+            color: rgba(0, 0, 0, 0.7);
+        }
+        .unseen-message .history--message {
+            color: darkgreen;
+            /* color: #000; */
+            /* font-weight: bold; */
+            font-weight: 600;
+        }
+        /* .unseen-message::after {
+
+            font-weight: bold;
+            content: '';
+            position: absolute;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            right: 1%;
+            top: 50%;
+            background-color: #444;
+        }
+        .unseen-message::before {
+
+            font-weight: bold;
+            content: '';
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            right: 1.1%;
+            top: 51%;
+            border: 1px solid #fff;
+            border-radius: 50%;
+            z-index: 1;
+        } */
     </style>
 </head>
 <body>
@@ -272,7 +322,7 @@
     <!-- firebase.js -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-app.js";
-        import { connectFirestoreEmulator, getFirestore, collection, doc, getDocs, setDoc, onSnapshot, query, Timestamp, orderBy, addDoc } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
+        import { connectFirestoreEmulator, getFirestore, collection, doc, getDocs, setDoc, onSnapshot, query, Timestamp, orderBy, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.9.2/firebase-firestore.js";
         import { initializeAppCheck, getToken } from "https://cdnjs.cloudflare.com/ajax/libs/firebase/9.9.2/firebase-app-check.min.js";
 
         export class Message {
@@ -360,7 +410,6 @@
             }
 
             set p2pCollectionDoc(room) {
-                console.log(this.room + room)
                 this.collection = collection(this.db, this.room + room);
                 this.doc = doc(this.collection);
             }
@@ -371,7 +420,7 @@
             }
 
             set merchantDoc(chat) {
-                this.merchantHistoryDoc = doc(this.db, chat.history + `/merchant/${chat.user2.id}`, chat.user1.id)
+                this.merchantHistoryDoc = doc(this.db, this.history + `/merchant/${chat.user1.id}`, chat.user2.id)
             }
 
             set clientCollection(user) {
@@ -379,7 +428,7 @@
             }
 
             set clientDoc(chat) {
-                this.clientHistoryDoc = doc(this.db, chat.history + `/client/${chat.user1.id}`, chat.user2.id)
+                this.clientHistoryDoc = doc(this.db, this.history + `/client/${chat.user2.id}`, chat.user1.id)
             }
 
             appCheck() {
@@ -398,15 +447,34 @@
             }
             subscribe() {
                 const recentMessagesQuery = query(this.merchantHistoryCollection, orderBy("datetime", "asc"));
+                const histories = [];
                 this.unsubscribeListenerHistory = onSnapshot(recentMessagesQuery.withConverter(historyConverter), function(snapshot) {
                     snapshot.docChanges().forEach(function(change) {
                         var history = change.doc.data();
                         if (change.type === "added") {
                             // console.log("New city: ", change.doc.data());
                             // displayHistory(history);
+                            displayHistory(history);
+                            histories.push(history)
                         }
                         if (change.type === "modified") {
-                            removePreviousHistory(change.doc.data());
+                            const newItem = change.doc.data();
+                            const previousMessage = histories.filter(item => item.receiverName == newItem.receiverName);
+                            if (previousMessage[0].seenStatus !== newItem.seenStatus && previousMessage[0].msg == newItem.msg) {
+                                clearUnseenMessageStyle(newItem);
+                            } else {
+                                removePreviousHistory(newItem);
+                                displayHistory(history);
+                            }
+                            histories.splice(histories.indexOf(previousMessage), 1);
+                            histories.push(history)
+                            // updateHistoryView(change, change.doc.data());
+                            // if (change.oldIndex == 0 || change.oldIndex !== change.newIndex) {
+                            //     removePreviousHistory(change.doc.data());
+                            //     displayHistory(history);
+                            // } else {
+                            //     clearUnseenMessageStyle(change.doc.data());
+                            // }
                             // displayHistory(history);
                             // console.log("Modified city: ", change.doc.data());
                         }
@@ -416,7 +484,7 @@
                         // console.log(change.doc._document.readTime.timestamp.seconds)
                         // if (!change.doc.metadata.hasPendingWrites) {
                         // displayMessage(message);
-                        displayHistory(history);
+                        // displayHistory(history);
                         // new Chat().display(message)
                         // chat.display(message);
                         // }
@@ -453,6 +521,14 @@
                     console.log(err)
                     throw err;
                 }
+            }
+            async setSeenStatusTrue() {
+                // const clientHistoryRef = this.clientHistoryDoc.withConverter(historyConverter)
+                const merchantHistoryRef = this.merchantHistoryDoc.withConverter(historyConverter);
+                // await updateDoc(clientHistoryRef, {"seenStatus": 0})
+                await updateDoc(merchantHistoryRef, {"seenStatus": 0})
+                // await setDoc(clientHistoryRef, new History(this.user2.id, this.user1.id, data.message, 0, data.date), {merge: true})
+                // clientHistoryRef.update({"seenStatus": 0});
             }
             async readAll() {
                 const querySnapshot = await getDocs(this.collection);
@@ -510,11 +586,13 @@
             };
             body.prepend(`
                 <div class="history message" onclick=p2pChat('${encodeURIComponent(JSON.stringify(room))}')>
-                    <div class="history--receiver-name">
-                        ${history.receiverName}
-                    </div>
-                    <div>
-                        ${history.msg.substr(0, 30)}
+                    <div class="${history.seenStatus == 0 ? '' : 'unseen-message'}">
+                        <div class="history--receiver-name">
+                            ${history.receiverName}
+                        </div>
+                        <div class="history--message">
+                            ${history.msg.substr(0, 30)}
+                        </div>
                     </div>
                 </div>
             `);
@@ -522,9 +600,22 @@
 
         window.removePreviousHistory = (history) => {
             const body = $(".chat__box--body.all-messages");
-            const candidateNode = $(".history .history--receiver-name:contains('"+ history.receiverName +"')").parent();
+            const candidateNode = $(".history .history--receiver-name:contains('"+ history.receiverName +"')").parent().parent();
             // candidateNode.fadeOut();
             candidateNode.hide();
+        }
+
+        window.clearUnseenMessageStyle = (history) => {
+            const body = $(".chat__box--body.all-messages");
+            const candidateNode = $(".history .history--receiver-name:contains('"+ history.receiverName +"')").parent();
+            // const candidateNode = $(".history .history--receiver-name:contains('"+ history.receiverName +"')").siblings("history--message").first();
+            // candidateNode.fadeOut();
+            candidateNode.removeClass("unseen-message");
+        }
+
+        window.updateHistoryView = (change, document) => {
+            const body = $(".chat__box--body.all-messages");
+            const candidateNode = $(".history .history--receiver-name:contains('"+ history.receiverName +"')").parent();
         }
 
         window.LoadHistory = (user) => new Promise((resolve, reject) => {
@@ -543,14 +634,23 @@
         let newDate = null, dateChanged = null, firstDateSlot = true;
         let chatRoom = null;
         const p2pChat = (room) => {
+            window.state = "p2pChat"
             room = JSON.parse(decodeURIComponent(room))
+            const merchant = { id: room.merchantName, type: "receiver", name: room.merchantRoom };
+            const client = { id: room.clientName, type: "sender" };
             chatRoom = room;
             p2p.p2pCollectionDoc = `${room.merchantName}-${room.clientName}`;
+            p2p.merchantCollection = merchant;
+            p2p.merchantDoc = { user1: merchant, user2: client };
+            p2p.clientCollection = client;
+            p2p.clientDoc = { user1: merchant, user2: client };
             $(".receiver-name.p2p span:last-child").text( room.clientName );
             p2p.subscribe();
+            p2p.setSeenStatusTrue();
         }
         function display(content) {
             try {
+                if (window.state == "history") return
                 $(".all-messages").attr('style', 'display: none !important')
                 const messengerBody = $('.chat__box--body.p2p');
                 $(".p2p").attr('style', 'display: block !important');
@@ -783,7 +883,7 @@
             try {
                 window
                     .LoadHistory(merchant)
-                    .then(history => console.log(history))
+                    .then(history => { /* console.log(history)*/ })
                     .catch(err => { console.log(err) })
             } catch(err) {
                 console.log(err);
@@ -791,6 +891,7 @@
         }
 
         function p2pReset() {
+            window.state = "history"
             $(".p2p").attr('style', 'display: none !important')
             $(".all-messages").attr('style', 'display: block !important')
             $(".chat__box--body.p2p").empty();
