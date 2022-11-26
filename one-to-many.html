@@ -5,9 +5,279 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>chat</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro&display=swap');
+        :root {
+            --bg-chat-900: #111;
+            --bg-chat-800: #222;
+            --bg-chat-700: #333;
+            --bg-chat-600: #444;
+            --bg-chat-500: #777;
+            --bg-chat-400: #bbb;
+            --bg-chat-300: #ccc;
+            --bg-chat-200: #ddd;
+            --bg-chat-100: #eee;
+            --bg-chat-50: #fff;
+
+            --bg-green-900  : rgb(5, 133, 76);
+        }
+        /* @import url('https://fonts.googleapis.com/css2?family=Poppins&display=swap'); */
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+        .messenger {
+            z-index: 10000;
+            background-color: #fff;
+            width: calc(230px + 100px);
+            height: calc(370px + 100px);
+            border-radius: 1rem;
+            /* font-family: 'Poppins', sans-serif; */
+            bottom: 0;
+            right: 0;
+            position: fixed;
+            margin-right: 100px;
+            margin-bottom: 5px;
+            box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+        }
+        .messenger .container {
+            display: flex;
+            justify-content: center;
+        }
+        /* .messenger__header { */
+        /* .chat__box--header {
+            color: #fff;
+            height: 10%;
+            background-color: var(--bg-green-900);
+            border-radius: .8rem .8rem 0rem 0rem;
+            width: 100%;
+            margin-left: 0;
+
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        } */
+        .header__buttons {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 15px;
+        }
+        #crossbar {
+            font-size: 2rem;
+            font-weight: lighter;
+            cursor: pointer;
+        }
+        #minimizer, #maximizer {
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        .messenger__body {
+            width: 100%;
+            margin-left: 0;
+            position: relative;
+            height: 75%;
+            overflow-y: scroll;
+            overflow-x: hidden;
+            scrollbar-width: none;  /* Firefox */
+        }
+        /* .messenger__footer { */
+        .chat__box--footer {
+        /* .footer { */
+            width: 100%;
+            margin-left: 0;
+            height: 15%;
+            border-top: 1px solid rgba(0, 0, 0, 0.3);
+            background-color: #fff;
+            position: relative;
+            /* display: flex;
+            justify-content: center;
+            align-items: center; */
+        }
+        .footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
+
+            position: absolute;
+            top: 25%;
+            right: 2%;
+        }
+        .messenger textarea {
+            /* font-size: 1.2rem; */
+            width: 108%;
+            border: none;
+            resize: none;
+            border-radius: 4px;
+            background: none;
+        }
+        .messenger textarea:focus {
+            /* border: none; */
+            outline: none;
+        }
+        .messenger textarea::placeholder {
+            color: var(--bg-chat-500);
+        }
+        /* .message {
+            border-right: 2px solid rgba(0, 0, 0, 0.12);
+        } */
+        .message__send {
+            margin-top: 20%;
+            font-size: 2.5rem;
+            color: var(--bg-green-900);
+            background-color: #fff;
+            border: none;
+        }
+        .message__send:hover {
+            font-size: 2.6rem;
+        }
+        .conversation {
+            margin: 10px 10px;
+            position: relative;
+        }
+        .conversation__user {
+            display: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #222;
+        }
+        .conversation__text {
+            box-shadow: rgba(0, 0, 0, 0.12) 0px 1px 3px, rgba(0, 0, 0, 0.24) 0px 1px 2px;
+            background-color: #fff;
+            border-radius: 5px;
+            padding: 8px;
+            padding-bottom: 15px;
+            width: fit-content;
+            max-width: 90%;
+            min-width: 30%;
+            position: relative;
+        }
+        .receiver {
+            margin-left: 20px;
+        }
+        .receiver-name {
+            text-transform: capitalize;
+            font-size: 1.8rem;
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
+        }
+        /* .receiver-name.p2p {
+            display: flex;
+        } */
+        .sender {
+            margin-right: 20px;
+        }
+        .timestamp {
+            bottom: .8px;
+            right: 5px;
+            font-size: 1.5rem;
+            position: absolute;
+            color: #777;
+        }
+        /* .bubble-arrow {
+            position: absolute;
+            width: 0;
+            bottom: 40px;
+            left: -16px;
+            height: 0;
+        }
+        .bubble-arrow.alt {
+            right: -2px;      
+            bottom: 40px;
+            left: auto;
+        }
+        .bubble-arrow:after {
+            content: "";
+            position: absolute;
+            border: 0 solid transparent;
+            border-top: 9px solid #fff;
+            border-radius: 0 20px 0;
+            width: 15px;
+            height: 30px;
+            transform: rotate(145deg);
+        }
+        .bubble-arrow.alt:after {
+            transform: rotate(45deg) scaleY(-1);
+        } */
+        .messenger .date {
+            background-color: #fff;
+            box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+            padding: 5px 8px;
+            border-radius: 5px;
+        }
+        .divider span {
+            display: inline-block;
+        }
+        .divider {
+            text-align: center;
+            z-index: 30;
+            position: sticky;
+            top: 10px;
+        }
+        @keyframes fadeOut {
+            0%   {opacity: 1;}
+            90%  {opacity: 1;}
+            100% {opacity: 0;}
+        }
+        .messenger__body::-webkit-scrollbar {
+            display: none;
+        }
+        /* Extra small devices (phones, 600px and down) */
+        @media only screen and (max-width: 600px) {
+            .messenger textarea {
+                font-size: 1.5rem;
+            }
+            .conversation {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* Small devices (portrait tablets and large phones, 600px and up) */
+        @media only screen and (min-width: 600px) {
+            .messenger textarea {
+                font-size: 1.5rem;
+            }
+            .conversation {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Medium devices (landscape tablets, 768px and up) */
+        @media only screen and (min-width: 768px) {
+            .messenger textarea {
+                font-size: 1.5rem;
+            }
+            .conversation {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Large devices (laptops/desktops, 992px and up) */
+        @media only screen and (min-width: 992px) {
+            .messenger textarea {
+                font-size: 1.5rem;
+            }
+            .conversation {
+                font-size: 1.5rem;
+            }
+        }
+
+        /* Extra large devices (large laptops and desktops, 1200px and up) */
+        @media only screen and (min-width: 1200px) {
+            .messenger textarea {
+                font-size: 1.5rem;
+            }
+            .conversation {
+                font-size: 1.5rem;
+            }
+        }
+
         body {
             height: 100vh;
             /* font-family: 'Poppins', sans-serif; */
@@ -78,9 +348,9 @@
 
             cursor: pointer;
         }
-        .buttons > div:hover, .back-button:hover {
+        /* .buttons > div:hover, .back-button:hover {
             background-color: #ebedef;
-        }
+        } */
         .back-button {
             /* margin: 0 7px; */
             width: 35px;
@@ -89,15 +359,27 @@
             color: #444;
 
             display: flex;
-            align-items: center;
-            justify-content: center;
+            /* align-items: center; */
+            /* justify-content: center; */
             font-size: 2.2rem;
+            /* display: inline-block; */
             cursor: pointer;
+        }
+        .name {
+            /* display: inline-block; */
+            /* display: flex;
+            flex-direction: column; */
+        }
+        .center {
+            display: flex;
+            align-items: center;
+            /* justify-content: center; */
         }
         .receiver-name {
             display: flex;
+            /* justify-content: center; */
             align-items: center;
-            font-size: 1.2rem;
+            /* font-size: 1.2rem; */
             /* padding-left: 10px; */
             color: #444;
             width: 100%;
@@ -115,11 +397,6 @@
         .chat__box--footer {
             background-color: white;
             height: 15%;
-
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
             /* padding: 20px;
             padding-left: 5px; */
         }
@@ -131,7 +408,8 @@
             outline: none;
             resize: none;
             border-radius: 20px;
-            font-size: large;
+            /* font-size: .95rem; */
+            /* font-size: large; */
             /* border: 2px solid #1362b3; */
             background-color: #ebedef;
             border: none;
@@ -205,7 +483,11 @@
             height: 0;
         }
 
-        .chat__box--body {
+        /* .chat__box--footer.p2p {
+            height: 15%;
+        } */
+
+        .chat__box--body.all-messages {
             height: 88%;
         }
 
@@ -272,19 +554,21 @@
             </svg>
         </div>
     </div>
-    <div class="chat__box">
+    <div class="chat__box" style="display: none;">
         <div class="chat__box--header">
             <div class="receiver-name p2p">
-                <span class="back-button" onclick="p2pReset()">
-                    <img src="./public/img/back.png" alt="" width="70%"> 
-                </span>
-                <span>{{receiverName}}</span>
+                <div class="center">
+                    <span class="back-button" onclick="p2pReset()">
+                        <img src="./public/img/back.png" alt="" width="70%"> 
+                    </span>
+                    <span class="name">{{receiverName}}</span>
+                </div>
             </div>
             <div class="receiver-name all-messages">
                 <span>Messages</span>
             </div>
             <div class="buttons">
-                <div class="minus" onclick="minimizeChatBox()">
+                <div class="minus">
                     <img src="./public/img/minus-3108.png" alt="" width="60%">
                 </div>
             </div>
@@ -307,14 +591,16 @@
         <div class="chat__box--footer all-messages">
         </div>
         <div class="chat__box--footer p2p">
-            <div class="attachment">
-                <svg viewBox="0 0 24 24" height="20px" width="20px" class="b6ax4al1 m4pnbp5e aqweqrfb ahndzqod db0glzta tnag3kze"><g fill-rule="evenodd"><polygon fill="none" points="-6,30 30,30 30,-6 -6,-6 "></polygon><path d="m18,11l-5,0l0,-5c0,-0.552 -0.448,-1 -1,-1c-0.5525,0 -1,0.448 -1,1l0,5l-5,0c-0.5525,0 -1,0.448 -1,1c0,0.552 0.4475,1 1,1l5,0l0,5c0,0.552 0.4475,1 1,1c0.552,0 1,-0.448 1,-1l0,-5l5,0c0.552,0 1,-0.448 1,-1c0,-0.552 -0.448,-1 -1,-1m-6,13c-6.6275,0 -12,-5.3725 -12,-12c0,-6.6275 5.3725,-12 12,-12c6.627,0 12,5.3725 12,12c0,6.6275 -5.373,12 -12,12"></path></g></svg>
-            </div>
-            <div class="textarea">
-                <input type="text" id="message">
-            </div>
-            <div class="send-button" onclick="sendMessage()">
-                <svg width="20px" height="20px" viewBox="0 0 24 24" class="db0glzta"><path d="M16.6915026,12.4744748 L3.50612381,13.2599618 C3.19218622,13.2599618 3.03521743,13.4170592 3.03521743,13.5741566 L1.15159189,20.0151496 C0.8376543,20.8006365 0.99,21.89 1.77946707,22.52 C2.41,22.99 3.50612381,23.1 4.13399899,22.8429026 L21.714504,14.0454487 C22.6563168,13.5741566 23.1272231,12.6315722 22.9702544,11.6889879 C22.8132856,11.0605983 22.3423792,10.4322088 21.714504,10.118014 L4.13399899,1.16346272 C3.34915502,0.9 2.40734225,1.00636533 1.77946707,1.4776575 C0.994623095,2.10604706 0.8376543,3.0486314 1.15159189,3.99121575 L3.03521743,10.4322088 C3.03521743,10.5893061 3.34915502,10.7464035 3.50612381,10.7464035 L16.6915026,11.5318905 C16.6915026,11.5318905 17.1624089,11.5318905 17.1624089,12.0031827 C17.1624089,12.4744748 16.6915026,12.4744748 16.6915026,12.4744748 Z"></path></svg>
+            <div class="footer">
+                <div class="attachment">
+                    <svg viewBox="0 0 24 24" height="20px" width="20px" class="b6ax4al1 m4pnbp5e aqweqrfb ahndzqod db0glzta tnag3kze"><g fill-rule="evenodd"><polygon fill="none" points="-6,30 30,30 30,-6 -6,-6 "></polygon><path d="m18,11l-5,0l0,-5c0,-0.552 -0.448,-1 -1,-1c-0.5525,0 -1,0.448 -1,1l0,5l-5,0c-0.5525,0 -1,0.448 -1,1c0,0.552 0.4475,1 1,1l5,0l0,5c0,0.552 0.4475,1 1,1c0.552,0 1,-0.448 1,-1l0,-5l5,0c0.552,0 1,-0.448 1,-1c0,-0.552 -0.448,-1 -1,-1m-6,13c-6.6275,0 -12,-5.3725 -12,-12c0,-6.6275 5.3725,-12 12,-12c6.627,0 12,5.3725 12,12c0,6.6275 -5.373,12 -12,12"></path></g></svg>
+                </div>
+                <div class="textarea">
+                    <input type="text" id="message">
+                </div>
+                <div class="send-button" onclick="sendMessage2()">
+                    <svg width="20px" height="20px" viewBox="0 0 24 24" class="db0glzta"><path d="M16.6915026,12.4744748 L3.50612381,13.2599618 C3.19218622,13.2599618 3.03521743,13.4170592 3.03521743,13.5741566 L1.15159189,20.0151496 C0.8376543,20.8006365 0.99,21.89 1.77946707,22.52 C2.41,22.99 3.50612381,23.1 4.13399899,22.8429026 L21.714504,14.0454487 C22.6563168,13.5741566 23.1272231,12.6315722 22.9702544,11.6889879 C22.8132856,11.0605983 22.3423792,10.4322088 21.714504,10.118014 L4.13399899,1.16346272 C3.34915502,0.9 2.40734225,1.00636533 1.77946707,1.4776575 C0.994623095,2.10604706 0.8376543,3.0486314 1.15159189,3.99121575 L3.03521743,10.4322088 C3.03521743,10.5893061 3.34915502,10.7464035 3.50612381,10.7464035 L16.6915026,11.5318905 C16.6915026,11.5318905 17.1624089,11.5318905 17.1624089,12.0031827 C17.1624089,12.4744748 16.6915026,12.4744748 16.6915026,12.4744748 Z"></path></svg>
+                </div>
             </div>
         </div>
     </div>
@@ -460,7 +746,7 @@
                         if (change.type === "modified") {
                             const newItem = change.doc.data();
                             const previousMessage = histories.filter(item => item.receiverName == newItem.receiverName);
-                            if (previousMessage[0].seenStatus !== newItem.seenStatus && previousMessage[0].msg == newItem.msg) {
+                            if (previousMessage && previousMessage.length && previousMessage[0].seenStatus !== newItem.seenStatus && previousMessage[0].msg == newItem.msg) {
                                 clearUnseenMessageStyle(newItem);
                             } else {
                                 removePreviousHistory(newItem);
@@ -490,7 +776,7 @@
                         // }
                     });
                 }, function(err) {
-                    chat.permissionDenialModal(err.code.toUpperCase());
+                    // chat.permissionDenialModal(err.code.toUpperCase());
                     // console.log(err)
                 });
             }
@@ -499,7 +785,7 @@
                     // this.unsubscribeListener();
                     this.unsubscribeListenerHistory = null;
                 } catch(err) {
-                    console.log(err);
+                    // console.log(err);
                 }
             }
         }
@@ -518,7 +804,7 @@
                     await setDoc(merchantHistoryRef, new History(this.user1.id, this.user2.id, data.message, 0, data.date), {merge: true})
                     await setDoc(clientHistoryRef, new History(this.user2.id, this.user1.id, data.message, 1, data.date), {merge: true})
                 } catch(err) {
-                    console.log(err)
+                    // console.log(err)
                     throw err;
                 }
             }
@@ -542,6 +828,7 @@
                 this.unsubscribeListener = onSnapshot(recentMessagesQuery.withConverter(messageConverter), function(snapshot) {
                     snapshot.docChanges().forEach(function(change) {
                         var message = change.doc.data();
+                        // console.log(message)
                         // console.log(message.toString(), new Date(message.date.seconds*1000));
                         // console.log(change.doc._document.readTime.timestamp.seconds)
                         // if (!change.doc.metadata.hasPendingWrites) {
@@ -566,6 +853,7 @@
         }
         window.HistoryFirestore = HistoryFirestore;
         window.P2PFirestore = P2PFirestore;
+        window.Message = Message;
     </script>
     <!-- all-messages -->
     <script type="module">
@@ -581,14 +869,14 @@
         window.displayHistory = (history) => {
             const body = $(".chat__box--body.all-messages");
             const room = {
-                clientName: history.receiverName,
-                merchantName: history.senderName
+                clientName: history.receiverName == "pet shop bd" ? history.senderName : history.receiverName,
+                merchantName: history.receiverName == "pet shop bd" ? history.receiverName : history.senderName
             };
             body.prepend(`
                 <div class="history message" onclick=p2pChat('${encodeURIComponent(JSON.stringify(room))}')>
                     <div class="${history.seenStatus == 0 ? '' : 'unseen-message'}">
                         <div class="history--receiver-name">
-                            ${history.receiverName}
+                            ${history.receiverName == "pet shop bd" ? history.senderName : history.receiverName}
                         </div>
                         <div class="history--message">
                             ${history.msg.substr(0, 30)}
@@ -636,17 +924,21 @@
         const p2pChat = (room) => {
             window.state = "p2pChat"
             room = JSON.parse(decodeURIComponent(room))
-            const merchant = { id: room.merchantName, type: "receiver", name: room.merchantRoom };
-            const client = { id: room.clientName, type: "sender" };
+            p2p.user1 = { id: room.merchantName, type: "receiver", name: room.merchantRoom };
+            p2p.user2 = { id: room.clientName, type: "sender" };
             chatRoom = room;
             p2p.p2pCollectionDoc = `${room.merchantName}-${room.clientName}`;
-            p2p.merchantCollection = merchant;
-            p2p.merchantDoc = { user1: merchant, user2: client };
-            p2p.clientCollection = client;
-            p2p.clientDoc = { user1: merchant, user2: client };
+            p2p.merchantCollection = p2p.user1;
+            p2p.merchantDoc = { user1: p2p.user1, user2: p2p.user2 };
+            p2p.clientCollection = p2p.user2;
+            p2p.clientDoc = { user1: p2p.user1, user2: p2p.user2 };
             $(".receiver-name.p2p span:last-child").text( room.clientName );
             p2p.subscribe();
             p2p.setSeenStatusTrue();
+        }
+        window.sendMessage = (message) => {
+            const content = new Message(p2p.user1.id, message, new Date(), "", 'msg', window.location.href);
+            p2p.storeMessage(content)
         }
         function display(content) {
             try {
@@ -655,7 +947,7 @@
                 const messengerBody = $('.chat__box--body.p2p');
                 $(".p2p").attr('style', 'display: block !important');
                 // const sentBy = this.user1.type == "sender" ? "sender" : "receiver";
-                const sentBy = chatRoom.merchantName == content.id ? "sender" : "receiver";
+                const sentBy = p2p.user1.id == content.id ? "sender" : "receiver";
                 const timestamp = new Date(content.date) == "Invalid Date"
                                 ? new Date(content.date.seconds*1000) : new Date(content.date);
                 const [day, month, year, hour, minute] = 
@@ -672,20 +964,18 @@
                     ? `${(hour - 12).toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} pm` 
                     : `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')} am`;
 
-                messengerBody.append(`<div>${content.message}</div>`);
+                // messengerBody.append(`<div>${content.message}</div>`);
                 if (!dateChanged) {
-                    // newDate = newTimestamp(date);
-                    // messengerBody.append(bindNewMessage(sentBy, content.message, newDate, sentAt));
-                    // messageDates.set(date, true);                    
+                    newDate = newTimestamp(date);
+                    messengerBody.append(bindNewMessage(sentBy, content.message, newDate, sentAt));
+                    messageDates.set(date, true);
                 } else {
-                    // newDate.append(
-                    // const message = bindNewMessage(sentBy, content.message, null, sentAt)
-                    // )
-                    // messengerBody.append(newDate)
-                    // console.log(message)
-                    messengerBody.append(message);
+                    newDate.append(
+                        bindNewMessage(sentBy, content.message, null, sentAt)
+                    )
+                    messengerBody.append(newDate)
                 }
-                // messengerBody.animate({ scrollTop: messengerBody[0].scrollHeight + 1000 }, 50);
+                messengerBody.animate({ scrollTop: messengerBody[0].scrollHeight + 1000 }, 50);
             } catch(err) {
                 throw err;
             }
@@ -733,71 +1023,56 @@
         window.displayMessage = display;
         window.p2pChat = p2pChat;
     </script>
-    <!-- messenger.js -->
-    <script type="module">
-        class User {
-            constructor(id, type, phone, profile, name) {
-                this.id = id;
-                this.name = name;
-                this.type = type;
-                this.phone = phone;
-                this.profile = profile;
+    <script>
+        function maximizeChatBox() {
+            const courierName = "pet shop bd"
+            const merchant = { id: courierName, type: "receiver", name: courierName };
+            try {
+                window
+                    .LoadHistory(merchant)
+                    .then(history => { /* console.log(history)*/ })
+                    .catch(err => { /* console.log(err) */ })
+            } catch(err) {
+                // console.log(err);
             }
         }
 
-        class Chat {
-            constructor(user1, user2) {
-                this.user1 = user1;
-                this.user2 = user2;
+        function p2pReset() {
+            window.state = "history"
+            $(".p2p").attr('style', 'display: none !important')
+            $(".all-messages").attr('style', 'display: block !important')
+            $(".chat__box--body.p2p").empty();
 
-                p2p.p2pCollectionDoc = `${user1.id}-${user2.id}`;
-                p2p.subscribe();
-            }
-            async send(message) {
-                try {
-                    const content = new Message(this.user1.id, message, new Date(), "", 'msg', window.location.href);
-                    await firestore.storeMessage(content);
-                } catch(err) {
-                    throw err;
+            const found = [];
+            const allMessages = $(".history.message")
+            // console.log(Object.keys( allMessages ))
+            // allMessages.forEach(node => {
+            for (let node = 0; node < allMessages.length; ++node) {
+                // if (found.indexOf(node))
+                // console.log($(allMessages[node]).fadeOut())
+                const el = $(allMessages[node]);
+                const candidate = el.children().children(".history--receiver-name")
+                const clientName = candidate.text().trim();
+                if (found.includes(clientName)) {
+                    // candidate.parent().parent().empty();
+                    candidate.parent().parent().detach()
+                    // console.log(candidate.text().trim());
                 }
+                found.push(clientName);
             }
-            permissionDenialModal(message) {
-                clearScreen();
-                $(".messenger__body").append(`<h3 style="text-align: center">${message}<h3>`)
-            }
+            // })
         }
 
         jQuery(function($) {
-            let chat;
-            window.Chat = Chat;
-            window.User = User;
-            window.LoadChat = (user1, user2) => new Promise((resolve, reject) => {
-                if (chat) {
-                    resolve(chat);
-                    return;
-                }
-                if (invalidUsers(user1, user2)) {
-                    reject("unauthorized request");
-                    return;
-                }
-                chat = new Chat(
-                    new User(user1.id, user1.type, user1.phone || null, user1.profile || null, user1.name),
-                    new User(user2.id, user2.type, user2.phone || null, user2.profile || null, user2.name),
-                );
-                const receiverName = $(".receiver-name span");
-                receiverName.text(chat.user1.type == "receiver" ? chat.user1.name : chat.user2.name);
-                resolve(chat);
-                return;
-            })
-            const messengerBody = $('.messenger__body');
+            const messengerBody = $('.chat__box--body');
             const chatBox = $('#message');
             const crossBar = $('#crossbar');
-            const minimizer = $('#minimizer');
-            const maximizer = $("#maximizer");
-            const messageSendButton = $(".message__send");
-            const messengerHeader = $(".messenger__header");
+            const minimizer = $('.minus');
+            const maximizer = $(".chat__icon");
+            const messageSendButton = $(".send-button");
+            const messengerHeader = $(".chat__box--header");
             const chatButton = $(".btn");
-            const messenger = $(".messenger");
+            const messenger = $(".chat__box");
 
             messengerBody.scroll(function() {
                 let currentLabel = null;
@@ -815,47 +1090,33 @@
                 }
             });
             minimizer.click(function() {
-                const currentMessengerHeight = parseInt(messenger.css("height"));
-                const currentHeaderHeight =  parseInt(messengerHeader.css("height"))
-                const bufferHeight = (currentMessengerHeight - currentHeaderHeight + 7) || 440;
-                // console.log(messengerHeader.css("height"))
-                // console.log(currentMessengerHeight)
-                // console.log(`${currentMessengerHeight - currentHeaderHeight}px`);
-                messenger.css({"bottom": `-${bufferHeight}px`});
-                minimizer.attr('style', 'display: none !important')
-                maximizer.attr('style', 'display: block !important')
+                messenger.attr('style', 'display: none !important')
+                // minimizer.attr('style', 'display: none !important')
+                // maximizer.attr('style', 'display: block !important')
             });
 
             maximizer.click(function() {
-                messenger.css({"bottom": "0px"});
-                maximizer.attr('style', 'display: none !important')
-                minimizer.attr('style', 'display: block !important')
-            })
-            crossBar.click(function() {
-                // const currentMessengerHeight = parseInt(messenger.css("height"));
-                // const currentHeaderHeight =  parseInt(messengerHeader.css("height"))
-                // const bufferHeight = (currentMessengerHeight - currentHeaderHeight) || 500;
-                
-                messenger.css({"bottom": "-1000px"});
-                maximizer.attr('style', 'display: none !important');
-                minimizer.attr('style', 'display: block !important');
-                chatBox.val('');
+                // messenger.css({"bottom": "0px"});
+                // maximizer.attr('style', 'display: none !important')
+                // minimizer.attr('style', 'display: block !important')
+                messenger.attr('style', 'display: block !important')
             })
             messageSendButton.click(async function() {
                 try {
                     const text = chatBox.val();
                     if (!text) {
-                        console.log("empty message")
+                        // console.log("empty message")
                         return;
                     }
                     chatBox.val('');
-                    await chat.send(text);
+                    // await chat.send(text);
+                    window.sendMessage(text);
                     notPermitted = false;
                     messengerBody.animate({ scrollTop: messengerBody[0].scrollHeight + 1000 }, 50);
                 } catch(err) {
                     notPermitted = true;
                     // console.log(err)
-                    chat.permissionDenialModal(err.code.toUpperCase());
+                    // chat.permissionDenialModal(err.code.toUpperCase());
                 }
             });
             chatButton.click(function() {
@@ -866,36 +1127,12 @@
                     messenger.css({"bottom": "0px"});
                     messengerBody.animate({ scrollTop: $('.messenger__body')[0].scrollHeight + 1000 }, 5);
                 } catch(err) {
-                    chat.permissionDenialModal(err.code.toUpperCase());
+                    // chat.permissionDenialModal(err.code.toUpperCase());
                 }
             })
         });
-
-        function clearScreen() {
-            $(".conversation__date").empty();
-        }
-
+        function sendMessage2() {}
     </script>
-    <script>
-        function maximizeChatBox() {
-            const courierName = "pet shop bd"
-            const merchant = { id: courierName, type: "receiver", name: courierName };
-            try {
-                window
-                    .LoadHistory(merchant)
-                    .then(history => { /* console.log(history)*/ })
-                    .catch(err => { console.log(err) })
-            } catch(err) {
-                console.log(err);
-            }
-        }
-
-        function p2pReset() {
-            window.state = "history"
-            $(".p2p").attr('style', 'display: none !important')
-            $(".all-messages").attr('style', 'display: block !important')
-            $(".chat__box--body.p2p").empty();
-        }
-    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 </body>
 </html>
